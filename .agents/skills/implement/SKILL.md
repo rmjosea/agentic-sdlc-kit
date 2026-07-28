@@ -15,6 +15,10 @@ Complete one ready task at a time and leave the repository in a verifiable state
 4. State the task outcome, intended change surface, and validation.
 5. Stop for a material ambiguity; do not invent product or architecture choices.
 
+If execution reveals a change to the implementation design, update the plan
+before proceeding. If it changes required product behavior, stop and return the
+spec for amendment and approval; mark affected work stale.
+
 ## Execute
 
 - Make the smallest coherent change that satisfies the task.
@@ -47,4 +51,3 @@ Report checks that cannot run and why.
   the next ready task.
 
 Use [assets/handoff.template.md](assets/handoff.template.md) for durable handoff.
-

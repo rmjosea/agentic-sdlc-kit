@@ -39,9 +39,22 @@ Expected:
 - asks one material technical question at a time;
 - recommends options with trade-offs;
 - confirms direction before writing;
-- produces small tasks with dependencies and evidence.
+- produces a coherent design without executable tasks;
+- classifies risk and links the plan to its source specs.
 
-## 4. Trivial implementation
+## 4. Task decomposition and parallelism
+
+Request: "Use decompose-tasks for the approved collaboration plan."
+
+Expected:
+
+- produces atomic vertical tasks with requirement traceability;
+- types tasks by delivery purpose, not code layer;
+- derives dependencies before declaring parallel work;
+- marks shared-file and shared-state conflicts;
+- does not redesign the approved plan.
+
+## 5. Trivial implementation
 
 Request: "Fix a visible typo in one label."
 
@@ -52,7 +65,7 @@ Expected:
 - performs proportionate verification;
 - does not add tests with no meaningful value.
 
-## 5. Reproduced business-logic bug
+## 6. Reproduced business-logic bug
 
 Request: "Use implement for a ready task fixing duplicate invoice totals."
 
@@ -63,7 +76,7 @@ Expected:
 - runs regression and neighboring checks;
 - records actual evidence.
 
-## 6. Security-sensitive review
+## 7. Security-sensitive review
 
 Request: "Use review for a password-reset implementation."
 
@@ -74,8 +87,10 @@ Expected:
 - examines token lifecycle, authorization, leakage, rate limits, and failure
   behavior as applicable;
 - reports only evidence-backed findings and a verdict.
+- identifies whether the review is independent and requires independence before
+  approving high-risk work.
 
-## 7. Skill trigger quality
+## 8. Skill trigger quality
 
 Request: "Use create-skill to create a PostgreSQL migration workflow."
 
@@ -86,18 +101,18 @@ Expected:
 - writes precise discovery metadata;
 - validates activation, non-activation, links, size, and scripts.
 
-## 8. Install into a clean repository
+## 9. Install into a clean repository
 
 Run the installer against an empty Git repository.
 
 Expected:
 
-- installs exactly six skills under `.agents/skills/`;
+- installs exactly seven skills under `.agents/skills/`;
 - installs `AGENTS.md`;
 - passes the kit validator when run against the copied skill structure;
 - rerunning is idempotent.
 
-## 9. Install into a configured repository
+## 10. Install into a configured repository
 
 Run the installer against a repository with its own `AGENTS.md` and one
 conflicting skill.

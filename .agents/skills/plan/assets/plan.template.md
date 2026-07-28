@@ -1,3 +1,11 @@
+---
+id: PLAN-<NNN>
+specs:
+  - SPEC-<NNN>
+status: draft
+risk: low
+---
+
 # <Feature> implementation plan
 
 ## Goal and spec references
@@ -10,17 +18,4 @@
 
 ## Risks and mitigations
 
-## Tasks
-
-### <TASK-ID>: <Outcome>
-
-- State: ready
-- Depends on: none
-- Change surface:
-- Completion evidence:
-- Validation:
-
-## Parallel work and conflict boundaries
-
 ## Open questions
-

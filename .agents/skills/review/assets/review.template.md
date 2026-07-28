@@ -2,6 +2,10 @@
 
 ## Scope and evidence
 
+## Review independence
+
+`independent | self-review`
+
 ## Findings
 
 ### <severity>: <concise title>
@@ -13,6 +17,9 @@
 
 ## Specification conformance
 
+| Requirement | Task(s) | Evidence | Result |
+|---|---|---|---|
+
 ## Verification results
 
 ## Residual risks and unverified areas
@@ -20,4 +27,3 @@
 ## Verdict
 
 `approved | changes-required | blocked`
-

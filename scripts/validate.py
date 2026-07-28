@@ -16,6 +16,7 @@ EXPECTED = {
     "shape-idea",
     "write-spec",
     "plan",
+    "decompose-tasks",
     "implement",
     "review",
     "create-skill",
@@ -118,6 +119,31 @@ def main() -> int:
     for state in sorted(SPEC_STATES):
         if f"`{state}`" not in index_template:
             errors.append(f"Spec index missing lifecycle state: {state}")
+
+    plan_template = (
+        SKILLS_ROOT / "plan" / "assets" / "plan.template.md"
+    ).read_text(encoding="utf-8")
+    for required in ("id: PLAN-", "specs:", "status: draft", "risk: low"):
+        if required not in plan_template:
+            errors.append(f"Plan template missing field: {required}")
+
+    task_template = (
+        SKILLS_ROOT / "decompose-tasks" / "assets" / "tasks.template.md"
+    ).read_text(encoding="utf-8")
+    for required in (
+        "Plan:",
+        "Requirements:",
+        "Type:",
+        "Risk:",
+        "State:",
+        "Depends on:",
+        "Parallel:",
+        "Conflicts with:",
+        "Completion evidence:",
+        "Validation:",
+    ):
+        if required not in task_template:
+            errors.append(f"Task template missing field: {required}")
 
     if errors:
         print("Validation failed:")

@@ -21,6 +21,8 @@ depends_on: []
 
 ## Requirements
 
+### REQ-001: <Observable requirement>
+
 ## Business rules
 
 ## Failure behavior and edge cases

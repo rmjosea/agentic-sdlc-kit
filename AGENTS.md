@@ -39,12 +39,13 @@ Record such decisions with a concise rationale instead.
 ## Workflow
 
 ```text
-idea -> shape-idea -> write-spec -> plan -> implement -> review
+idea -> shape-idea -> write-spec -> plan -> decompose-tasks -> implement -> review
 ```
 
 - `shape-idea`: clarify conversationally; write no files.
 - `write-spec`: persist approved product behavior as one or more cohesive specs.
-- `plan`: resolve technical decisions and create implementation-ready tasks.
+- `plan`: resolve technical decisions and define the implementation design.
+- `decompose-tasks`: turn an approved plan into an executable dependency graph.
 - `implement`: complete one ready task using short feedback loops.
 - `review`: assess spec conformance and engineering quality independently.
 - `create-skill`: create or improve skills without bloating agent context.
@@ -56,6 +57,7 @@ decision already exists. Trivial changes may use a lightweight inline plan.
 
 - Specifications define **what** must be true and why it matters.
 - Plans define **how** the repository will satisfy approved specifications.
+- Task graphs define **in what order** the approved plan can be implemented.
 - Technical contracts exist only when multiple tasks need them.
 - Temporary plans and handoffs belong under `.work/`.
 - Stable product specifications belong under `specs/`.
@@ -63,6 +65,30 @@ decision already exists. Trivial changes may use a lightweight inline plan.
   `verified`; advance them only when the corresponding evidence exists.
 - Code, tests, and executable checks are the final source of implementation
   truth; prose does not override observed behavior.
+
+## Traceability and change control
+
+- Give non-trivial requirements stable IDs and link every task to the
+  requirements it advances.
+- Link plans to their source specs and reviews to the requirements they verify.
+- If implementation changes **how**, update the plan before continuing.
+- If implementation changes **what**, stop, amend and reapprove the spec, then
+  mark affected plans and tasks stale until they are reconciled.
+- Do not treat an implementation discovery as silent authorization to expand
+  product scope.
+
+## Risk and independent review
+
+Classify plans and tasks as `low`, `medium`, or `high` risk. Increase rigor for
+changes involving data, compatibility, trust boundaries, money, privacy,
+permissions, destructive effects, or difficult rollback.
+
+- Low risk requires proportionate task-level verification.
+- Medium risk requires regression and failure-path evidence.
+- High risk requires an independent review from a fresh session or agent.
+
+A review by the implementer is a self-review. Label it accurately and never
+present it as independent evidence.
 
 ## Progressive disclosure
 

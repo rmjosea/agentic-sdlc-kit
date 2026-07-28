@@ -1,11 +1,11 @@
 ---
 name: plan
-description: Design how an approved specification should be implemented in an existing or new codebase, resolving material technical decisions with the user one clear question at a time before writing implementation-ready tasks. Use when the user asks for architecture, technical design, task decomposition, an implementation plan, data model, API contract, migration plan, or test strategy.
+description: Design how an approved specification should be implemented in an existing or new codebase, resolving material technical decisions with the user one clear question at a time. Use when the user asks for architecture, technical design, an implementation plan, data model, API contract, migration plan, or test strategy. Do not decompose the design into executable tasks.
 ---
 
 # Plan an Implementation
 
-Convert approved product behavior into a technically coherent, executable plan.
+Convert approved product behavior into a technically coherent design.
 Do not modify production code.
 
 ## Discover
@@ -50,33 +50,20 @@ independent review, or moving it out materially reduces task context. Possible
 artifacts include `architecture.md`, `data-model.md`, `api-contract.md`,
 `migration.md`, and `test-strategy.md`.
 
-## Decompose
-
-Create small vertical tasks that produce observable progress. Each task must
-have:
-
-- stable ID and outcome;
-- dependencies;
-- expected change surface;
-- acceptance or completion evidence;
-- validation commands or method;
-- state: `blocked`, `ready`, `in-progress`, or `done`.
-
-Prefer tasks that fit one focused agent session. Mark safe parallel work and
-shared-file conflicts explicitly. Avoid tasks named only after horizontal
-layers such as "do backend" or "add frontend".
-
 Use [assets/plan.template.md](assets/plan.template.md) and write temporary
-planning artifacts under `.work/<feature>/`.
+planning artifacts under `.work/<feature>/`. Keep the plan `draft` while a
+material decision or user confirmation is pending; set it to `approved` only
+after the user confirms the complete technical direction.
 
 ## Quality gate
 
 Verify that:
 
-- every task traces to a requirement;
-- every requirement is covered;
-- dependencies form an executable order;
-- tasks have observable completion evidence;
-- no unresolved material decision is hidden inside a task;
+- the plan links to every source specification;
+- requirements have a coherent implementation path;
+- risk is classified as `low`, `medium`, or `high`;
+- no unresolved material decision is hidden in the design;
 - the plan introduces no unnecessary infrastructure or abstraction.
 
+Do not create executable tasks. After the plan is approved, use
+`decompose-tasks`.

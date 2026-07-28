@@ -8,6 +8,10 @@ description: Review a completed or in-progress change against both its originati
 Review the actual diff and observed behavior. Do not rely on the implementer's
 summary as evidence.
 
+State whether the review is independent or a self-review. Treat only a fresh
+session or agent that did not implement the change as independent. High-risk
+work cannot receive an `approved` verdict without independent review.
+
 ## Establish scope
 
 1. Resolve the comparison base or ask for it.
@@ -23,6 +27,7 @@ inventing product intent.
 Check:
 
 - required behavior and acceptance criteria;
+- traceability from requirement IDs to tasks and evidence;
 - missing, partial, or extra behavior;
 - business rules, failures, and edge cases;
 - externally observable quality constraints;
@@ -68,4 +73,3 @@ Finish with one verdict:
 - `blocked`
 
 Use [assets/review.template.md](assets/review.template.md).
-

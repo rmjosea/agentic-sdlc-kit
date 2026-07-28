@@ -82,8 +82,9 @@ Exclude unless explicitly imposed:
 - deployment topology;
 - implementation tasks.
 
-Express acceptance criteria as observable outcomes. Use stable requirement IDs
-only when they improve traceability.
+Express acceptance criteria as observable outcomes. Give each non-trivial,
+implementation-relevant requirement a stable ID such as `REQ-001` so plans,
+tasks, and reviews can trace it without copying its text.
 
 ## Quality gate
 

@@ -8,7 +8,7 @@ The kit keeps human judgment where it matters and gives coding agents a clear,
 verifiable path from an idea to reviewed software:
 
 ```text
-idea -> shape-idea -> write-spec -> plan -> implement -> review
+idea -> shape-idea -> write-spec -> plan -> decompose-tasks -> implement -> review
 ```
 
 `create-skill` is a supporting capability for extending the kit without
@@ -36,6 +36,7 @@ degrading its quality or context efficiency.
 │   ├── shape-idea/
 │   ├── write-spec/
 │   ├── plan/
+│   ├── decompose-tasks/
 │   ├── implement/
 │   ├── review/
 │   └── create-skill/
@@ -56,7 +57,7 @@ python3 scripts/install.py /path/to/your/repository
 
 The installer:
 
-- copies the six canonical skills into `.agents/skills/`;
+- copies the seven canonical skills into `.agents/skills/`;
 - installs `AGENTS.md` when the target does not already have one;
 - never overwrites conflicting skills unless `--force-skills` is explicit;
 - preserves an existing `AGENTS.md` and requests a manual semantic merge.
@@ -77,6 +78,7 @@ Invoke the relevant skill explicitly when supported:
 Use shape-idea to help me develop this idea: ...
 Use write-spec to persist our approved understanding.
 Use plan for specs/001-example/spec.md.
+Use decompose-tasks for the approved implementation plan.
 Use implement for the next ready task.
 Use review against main and the originating spec.
 ```
