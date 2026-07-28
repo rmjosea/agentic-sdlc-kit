@@ -46,11 +46,15 @@ degrading its quality or context efficiency.
 │   ├── implement/
 │   ├── review/
 │   └── create-skill/
+├── docs/usage-guide.md
 ├── scripts/validate.py
 └── tests/scenarios.md
 ```
 
 ## Usage
+
+For a complete step-by-step walkthrough with routing diagrams, prompts, and
+worked examples, read the [Developer Guide](docs/usage-guide.md).
 
 ### Install into an existing repository
 
