@@ -21,6 +21,7 @@ EXPECTED = {
     "create-skill",
 }
 PROVIDER_PATHS = (".claude/", ".cursor/", ".codex/")
+SPEC_STATES = {"draft", "approved", "planned", "implemented", "verified"}
 
 
 def parse_frontmatter(text: str, path: Path) -> dict[str, str]:
@@ -105,6 +106,19 @@ def main() -> int:
         if skill_dir.is_dir():
             errors.extend(validate_skill(skill_dir))
 
+    spec_template = (
+        SKILLS_ROOT / "write-spec" / "assets" / "spec.template.md"
+    ).read_text(encoding="utf-8")
+    for required in ("id:", "title:", "status: draft", "depends_on: []"):
+        if required not in spec_template:
+            errors.append(f"Spec template missing metadata field: {required}")
+    index_template = (
+        SKILLS_ROOT / "write-spec" / "assets" / "spec-index.template.md"
+    ).read_text(encoding="utf-8")
+    for state in sorted(SPEC_STATES):
+        if f"`{state}`" not in index_template:
+            errors.append(f"Spec index missing lifecycle state: {state}")
+
     if errors:
         print("Validation failed:")
         for error in errors:
@@ -117,4 +131,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

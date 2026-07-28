@@ -86,3 +86,25 @@ Expected:
 - writes precise discovery metadata;
 - validates activation, non-activation, links, size, and scripts.
 
+## 8. Install into a clean repository
+
+Run the installer against an empty Git repository.
+
+Expected:
+
+- installs exactly six skills under `.agents/skills/`;
+- installs `AGENTS.md`;
+- passes the kit validator when run against the copied skill structure;
+- rerunning is idempotent.
+
+## 9. Install into a configured repository
+
+Run the installer against a repository with its own `AGENTS.md` and one
+conflicting skill.
+
+Expected:
+
+- stops before changing files because of the conflicting skill;
+- never overwrites the existing `AGENTS.md`;
+- requires explicit `--force-skills` to replace the conflicting skill;
+- reports that the engineering contracts need a manual semantic merge.

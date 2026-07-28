@@ -59,6 +59,8 @@ decision already exists. Trivial changes may use a lightweight inline plan.
 - Technical contracts exist only when multiple tasks need them.
 - Temporary plans and handoffs belong under `.work/`.
 - Stable product specifications belong under `specs/`.
+- Specification states are `draft`, `approved`, `planned`, `implemented`, and
+  `verified`; advance them only when the corresponding evidence exists.
 - Code, tests, and executable checks are the final source of implementation
   truth; prose does not override observed behavior.
 
@@ -81,4 +83,3 @@ Work is done only when:
 - the diff contains no unexplained unrelated changes;
 - documentation or contracts affected by the change are current;
 - remaining risks, skipped checks, and follow-up work are explicit.
-

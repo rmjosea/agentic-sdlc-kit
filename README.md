@@ -45,8 +45,31 @@ degrading its quality or context efficiency.
 
 ## Usage
 
-Place the kit at the root of a project or copy the skills into the directory
-discovered by your agent. The canonical source remains `.agents/skills/`.
+### Install into an existing repository
+
+Clone this kit, then run its provider-agnostic installer:
+
+```bash
+python3 scripts/install.py /path/to/your/repository --dry-run
+python3 scripts/install.py /path/to/your/repository
+```
+
+The installer:
+
+- copies the six canonical skills into `.agents/skills/`;
+- installs `AGENTS.md` when the target does not already have one;
+- never overwrites conflicting skills unless `--force-skills` is explicit;
+- preserves an existing `AGENTS.md` and requests a manual semantic merge.
+
+Exit code `3` means the skills were installed but `AGENTS.md` needs manual
+merging. This is intentional: two repository contracts cannot be merged safely
+with a blind text operation.
+
+Alternatively, tools compatible with the open skills ecosystem can install the
+skills from this GitHub repository using their preferred skills package
+manager. The canonical source remains `.agents/skills/`.
+
+### Run the workflow
 
 Invoke the relevant skill explicitly when supported:
 
@@ -82,4 +105,3 @@ template presence, and provider neutrality.
 ## License
 
 [MIT](LICENSE)
-

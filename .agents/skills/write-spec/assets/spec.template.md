@@ -1,3 +1,10 @@
+---
+id: SPEC-<NNN>
+title: <Capability name>
+status: draft
+depends_on: []
+---
+
 # <Capability name>
 
 ## Context
@@ -25,4 +32,3 @@
 ## Acceptance criteria
 
 ## Open questions
-

@@ -42,7 +42,23 @@ specs/<NNN-capability>/spec.md
 ```
 
 When more than one spec exists, maintain a concise `specs/README.md` containing
-only the capability list, state, and functional dependencies.
+only the capability list, state, and functional dependencies. Use
+[assets/spec-index.template.md](assets/spec-index.template.md).
+
+Assign each spec a stable ID and one lifecycle state:
+
+```text
+draft -> approved -> planned -> implemented -> verified
+```
+
+- `draft`: still being authored or awaiting product approval.
+- `approved`: product behavior and acceptance criteria are confirmed.
+- `planned`: an approved technical plan covers the spec.
+- `implemented`: the implementation is complete but not independently verified.
+- `verified`: review evidence confirms the acceptance criteria.
+
+Only advance a state when its evidence exists. Do not renumber an existing spec
+after its ID has been referenced by a plan, task, commit, or review.
 
 ## Content rules
 
@@ -79,3 +95,5 @@ Before finishing, verify:
 - no implementation preference is disguised as a requirement;
 - spec boundaries are cohesive and minimally coupled;
 - open questions are explicit and block planning when material.
+- frontmatter uses a stable ID, normalized state, and explicit dependencies;
+- the index matches the specs on disk when more than one spec exists.
