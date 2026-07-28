@@ -33,10 +33,17 @@ This kit provides the missing control loop:
 
 ```mermaid
 flowchart LR
-    A["Accepted intent"] --> B["Bounded implementation"]
-    B --> C["Executed checks"]
-    C --> D["Diff and evidence"]
-    D --> E["Verified outcome"]
+    A(("Intent")) --> B["Bounded change"]
+    B --> C["Execute checks"]
+    C --> D["Inspect diff"]
+    D --> E(("Evidence"))
+
+    classDef anchor fill:#0f172a,color:#ffffff,stroke:#334155,stroke-width:2px;
+    classDef action fill:#dbeafe,color:#172554,stroke:#3b82f6,stroke-width:2px;
+    classDef proof fill:#ede9fe,color:#3b0764,stroke:#8b5cf6,stroke-width:2px;
+    class A anchor;
+    class B,C,D action;
+    class E proof;
 ```
 
 It is deliberately small: no orchestration framework, provider adapter layer,
@@ -45,26 +52,22 @@ mandatory issue format, or speculative automation.
 ## Choose the minimum safe path
 
 ```mermaid
-flowchart TD
-    A["Accepted work"] --> B{"Clear, local, reversible, and low risk?"}
-    B -->|Yes| C["Direct path"]
-    C --> D["Implement and self-check the diff"]
+flowchart LR
+    A["Work request"] --> B{"Triage"}
+    B -->|"Local · reversible · low risk"| C["⚡ DIRECT · Implement + self-check"]
+    B -->|"Durable intent or design"| D["◆ STRUCTURED · Select useful gates"]
+    B -->|"Elevated risk or recovery"| E["⬢ CONTROLLED · Intent + plan + review"]
 
-    B -->|No| E{"Does product intent need clarification or durability?"}
-    E -->|Clarification| F["Shape idea"]
-    F --> G{"Durable product contract?"}
-    E -->|Already clear| G
-    G -->|Yes| H["Write spec"]
-    G -->|No| I{"Material technical decisions?"}
-    H --> I
-    I -->|Yes| J["Plan"]
-    I -->|No| K["Implement one bounded outcome"]
-    J --> L{"Multiple tasks, handoff, or parallel work?"}
-    L -->|Yes| M["Decompose tasks"]
-    L -->|No| K
-    M --> N["Implement ready tasks"]
-    N --> O["Evidence-based review"]
-    K --> O
+    classDef source fill:#0f172a,color:#ffffff,stroke:#334155,stroke-width:2px;
+    classDef decision fill:#f8fafc,color:#0f172a,stroke:#64748b,stroke-width:2px;
+    classDef direct fill:#dcfce7,color:#14532d,stroke:#22c55e,stroke-width:2px;
+    classDef structured fill:#dbeafe,color:#172554,stroke:#3b82f6,stroke-width:2px;
+    classDef controlled fill:#fef3c7,color:#78350f,stroke:#f59e0b,stroke-width:2px;
+    class A source;
+    class B decision;
+    class C direct;
+    class D structured;
+    class E controlled;
 ```
 
 Risk overrides apparent size. Authentication, permissions, persistent-data
@@ -100,12 +103,21 @@ idea -> shape-idea -> write-spec -> plan -> decompose-tasks -> implement -> revi
 The separation is intentional:
 
 ```mermaid
-flowchart TD
-    A["AGENTS.md: engineering contract"] --> B["Selected skill: procedure"]
-    B --> C["Durable artifact when valuable"]
-    B --> D["Code and observable checks"]
-    C --> D
-    D --> E["Evidence and review"]
+flowchart LR
+    A["Repository contract"] --> B["Selected skill"]
+    B --> C["Artifact when useful"]
+    C --> D["Code + checks"]
+    B -. "direct path" .-> D
+    D --> E["Evidence"]
+
+    classDef contract fill:#0f172a,color:#ffffff,stroke:#334155,stroke-width:2px;
+    classDef procedure fill:#dbeafe,color:#172554,stroke:#3b82f6,stroke-width:2px;
+    classDef artifact fill:#f8fafc,color:#0f172a,stroke:#94a3b8,stroke-width:2px;
+    classDef proof fill:#ede9fe,color:#3b0764,stroke:#8b5cf6,stroke-width:2px;
+    class A contract;
+    class B,D procedure;
+    class C artifact;
+    class E proof;
 ```
 
 ## Quick start
@@ -171,8 +183,14 @@ The kit protects agent context through three layers:
 
 ```mermaid
 flowchart LR
-    A["1. Name and description"] --> B["2. Selected SKILL.md"]
-    B --> C["3. Conditional references, scripts, and assets"]
+    A["① Metadata"] --> B["② SKILL.md"] --> C["③ Conditional resources"]
+
+    classDef discovery fill:#0f172a,color:#ffffff,stroke:#334155,stroke-width:2px;
+    classDef procedure fill:#dbeafe,color:#172554,stroke:#3b82f6,stroke-width:2px;
+    classDef resource fill:#ede9fe,color:#3b0764,stroke:#8b5cf6,stroke-width:2px;
+    class A discovery;
+    class B procedure;
+    class C resource;
 ```
 
 - Skill metadata is available for discovery.

@@ -1,11 +1,34 @@
 # Agentic SDLC Kit: Developer Guide
 
+**A practical operating manual from first request to verified software.**
+
+[![Guide](https://img.shields.io/badge/guide-step--by--step-2563eb.svg)](#1-the-operating-model)
+[![Examples: 5](https://img.shields.io/badge/worked%20examples-5-7c3aed.svg)](#5-example-a-direct-typo-fix)
+[![Provider agnostic](https://img.shields.io/badge/design-provider--agnostic-0f766e.svg)](#3-prepare-the-coding-agent)
+
 This guide explains how to develop software with Agentic SDLC Kit using any
 compatible coding agent, including Codex, Claude Code, Cursor, GitHub Copilot,
 or another tool that can read repository instructions and Agent Skills.
 
 The kit is a decision and verification harness. It does not replace your coding
 agent, programming language, test framework, issue tracker, or CI system.
+
+> [!NOTE]
+> You do not need to memorize the workflow. Start every change by asking the
+> agent to recommend the minimum safe route and explain its evidence.
+
+## Start here
+
+| Goal | Section |
+| --- | --- |
+| Understand the model | [Operating model](#1-the-operating-model) |
+| Install the kit | [Installation](#2-install-the-kit) |
+| Choose a route | [Route selection](#4-choose-the-correct-route) |
+| See complete examples | [Worked examples](#5-example-a-direct-typo-fix) |
+| Coordinate tasks | [Task states](#10-task-states-and-execution) |
+| Run agents in parallel | [Parallel work](#11-parallel-work) |
+| Resume safely | [Handoff](#12-handoff-and-recovery) |
+| Copy a prompt | [Prompt cheat sheet](#16-prompt-cheat-sheet) |
 
 ## 1. The operating model
 
@@ -19,25 +42,22 @@ This is not a mandatory pipeline. Each skill is a gate that you use only when
 it adds value.
 
 ```mermaid
-flowchart TD
-    A["Accepted work"] --> B{"Clear, local, reversible, low risk?"}
-    B -->|Yes| C["Direct implementation"]
-    B -->|No| D{"WHAT is ambiguous or needs a durable contract?"}
-    D -->|Ambiguous| E["Shape idea"]
-    E --> F{"Durable product behavior?"}
-    D -->|Already clear| F
-    F -->|Yes| G["Write spec"]
-    F -->|No| H{"Technical design needed?"}
-    G --> H
-    H -->|Yes| I["Plan"]
-    H -->|No| J["Implement bounded outcome"]
-    I --> K{"Multiple tasks, handoff, or parallel work?"}
-    K -->|Yes| L["Decompose tasks"]
-    K -->|No| J
-    L --> M["Implement ready tasks"]
-    M --> N["Review"]
-    J --> N
-    C --> O["Inline diff self-check"]
+flowchart LR
+    A["Work request"] --> B{"Triage"}
+    B -->|"Local · reversible · low risk"| C["⚡ DIRECT · Implement + self-check"]
+    B -->|"Durable intent or design"| D["◆ STRUCTURED · Select useful gates"]
+    B -->|"Elevated risk or recovery"| E["⬢ CONTROLLED · Intent + plan + review"]
+
+    classDef source fill:#0f172a,color:#ffffff,stroke:#334155,stroke-width:2px;
+    classDef decision fill:#f8fafc,color:#0f172a,stroke:#64748b,stroke-width:2px;
+    classDef direct fill:#dcfce7,color:#14532d,stroke:#22c55e,stroke-width:2px;
+    classDef structured fill:#dbeafe,color:#172554,stroke:#3b82f6,stroke-width:2px;
+    classDef controlled fill:#fef3c7,color:#78350f,stroke:#f59e0b,stroke-width:2px;
+    class A source;
+    class B decision;
+    class C direct;
+    class D structured;
+    class E controlled;
 ```
 
 The governing rule is:
@@ -103,7 +123,15 @@ spec merely because code will change.
 
 ## 4. Choose the correct route
 
-### Direct path
+| Route | Signal | Result |
+| --- | --- | --- |
+| **⚡ Direct** | Local, reversible, low risk | Implement and self-check |
+| **◆ Spec-only** | Durable product behavior | Spec, implementation, review |
+| **◆ Plan-only** | Accepted intent, design choices | Plan, code, review |
+| **◇ Full** | Durable behavior and multiple tasks | Spec, plan, graph, review |
+| **⬢ Controlled** | Elevated risk or recovery | Intent, plan, strong evidence |
+
+### ⚡ Direct path
 
 Use the direct path only when all of these are true:
 
@@ -126,7 +154,7 @@ Evidence chain:
 accepted intent -> diff -> checks
 ```
 
-### Spec-only path
+### ◆ Spec-only path
 
 Use a spec when the **what** needs to remain durable, but the **how** is
 repository-standard and requires no material technical decision.
@@ -143,7 +171,7 @@ Evidence chain:
 spec and requirements -> diff -> review evidence
 ```
 
-### Plan-only path
+### ◆ Plan-only path
 
 Use a plan without manufacturing a spec when accepted intent already exists in
 an issue, contract, reproduced behavior, or confirmed request, but the
@@ -161,7 +189,7 @@ Evidence chain:
 accepted intent -> plan -> diff -> review evidence
 ```
 
-### Full path
+### ◇ Full path
 
 Use the full path for new or ambiguous product behavior with non-obvious
 technical design and multiple executable tasks.
@@ -181,7 +209,7 @@ Evidence chain:
 spec/intent -> plan -> tasks -> implementation -> review evidence
 ```
 
-### Controlled path
+### ⬢ Controlled path
 
 Medium- or high-risk work always requires:
 
@@ -481,12 +509,21 @@ plan.
 Example graph:
 
 ```mermaid
-flowchart TD
+flowchart LR
     T1["TASK-001: Invitation domain behavior"] --> T2["TASK-002: Send invitation"]
     T1 --> T3["TASK-003: Accept invitation"]
     T2 --> T4["TASK-004: Expiry and retry evidence"]
     T3 --> T4
     T4 --> T5["TASK-005: Independent review evidence"]
+
+    classDef foundation fill:#0f172a,color:#ffffff,stroke:#334155,stroke-width:2px;
+    classDef parallel fill:#dbeafe,color:#172554,stroke:#3b82f6,stroke-width:2px;
+    classDef gate fill:#fef3c7,color:#78350f,stroke:#f59e0b,stroke-width:2px;
+    classDef proof fill:#ede9fe,color:#3b0764,stroke:#8b5cf6,stroke-width:2px;
+    class T1 foundation;
+    class T2,T3 parallel;
+    class T4 gate;
+    class T5 proof;
 ```
 
 Example task:
@@ -542,17 +579,24 @@ An approving high-risk review must be independent.
 ## 10. Task states and execution
 
 ```mermaid
-stateDiagram-v2
-    state "in-progress" as in_progress
-    [*] --> blocked: dependency or explicit blocker
-    [*] --> ready: no blocker
-    blocked --> ready: blocker explicitly resolved
-    ready --> in_progress: assigned work starts
-    in_progress --> done: evidence recorded
-    in_progress --> ready: interrupted and safe to retry
-    in_progress --> blocked: unsafe or externally blocked
-    ready --> stale: plan or intent changed
-    blocked --> stale: plan or intent changed
+flowchart LR
+    B["Blocked"] -->|"resolved"| R["Ready"]
+    R -->|"assigned"| A["In progress"]
+    A -->|"evidence"| D["Done"]
+    A -->|"unsafe stop"| B
+    R -->|"design changed"| S["Stale"]
+    B -->|"design changed"| S
+
+    classDef blocked fill:#fee2e2,color:#7f1d1d,stroke:#ef4444,stroke-width:2px;
+    classDef ready fill:#dbeafe,color:#172554,stroke:#3b82f6,stroke-width:2px;
+    classDef active fill:#fef3c7,color:#78350f,stroke:#f59e0b,stroke-width:2px;
+    classDef done fill:#dcfce7,color:#14532d,stroke:#22c55e,stroke-width:2px;
+    classDef stale fill:#f1f5f9,color:#334155,stroke:#94a3b8,stroke-width:2px;
+    class B blocked;
+    class R ready;
+    class A active;
+    class D done;
+    class S stale;
 ```
 
 Rules:
@@ -570,14 +614,22 @@ Rules:
 `Depends on` defines topology. `Execution` defines concurrency safety.
 
 ```mermaid
-flowchart TD
-    A["Dependencies done"] --> B{"Externally assigned?"}
-    B -->|No| C["Do not self-claim"]
-    B -->|Yes| D{"Execution policy"}
-    D -->|exclusive| E["Run alone"]
-    D -->|parallel-safe| F{"No active conflict?"}
-    F -->|No| G["Wait or reassign"]
-    F -->|Yes| H["Run concurrently"]
+flowchart LR
+    E["Eligible tasks"] --> A["External assignment"]
+    A --> C{"Active conflict?"}
+    C -->|"No"| P["Parallel-safe"]
+    C -->|"Yes"| X["Exclusive"]
+
+    classDef source fill:#0f172a,color:#ffffff,stroke:#334155,stroke-width:2px;
+    classDef assigned fill:#dbeafe,color:#172554,stroke:#3b82f6,stroke-width:2px;
+    classDef decision fill:#f8fafc,color:#0f172a,stroke:#64748b,stroke-width:2px;
+    classDef parallel fill:#dcfce7,color:#14532d,stroke:#22c55e,stroke-width:2px;
+    classDef exclusive fill:#fef3c7,color:#78350f,stroke:#f59e0b,stroke-width:2px;
+    class E source;
+    class A assigned;
+    class C decision;
+    class P parallel;
+    class X exclusive;
 ```
 
 Markdown task state is not an atomic lock. Two agents must not independently
@@ -624,16 +676,22 @@ editing.
 During implementation:
 
 ```mermaid
-flowchart TD
-    A["New discovery"] --> B{"Changes WHAT?"}
-    B -->|Yes| C["Stop and reconfirm intent"]
-    C --> D["Amend spec if one exists or is now justified"]
-    D --> E["Mark affected plan/tasks stale"]
-    B -->|No| F{"Changes HOW materially?"}
-    F -->|Yes| G["Update plan or inline approach"]
-    G --> H{"Task graph affected?"}
-    H -->|Yes| I["Mark tasks stale and decompose again"]
-    F -->|No| J["Continue bounded work"]
+flowchart LR
+    A["New discovery"] --> B{"What changed?"}
+    B -->|"Product intent"| C["Reconfirm · amend · stale"]
+    B -->|"Technical design"| D["Update plan · re-decompose"]
+    B -->|"No material change"| E["Continue bounded work"]
+
+    classDef source fill:#0f172a,color:#ffffff,stroke:#334155,stroke-width:2px;
+    classDef decision fill:#f8fafc,color:#0f172a,stroke:#64748b,stroke-width:2px;
+    classDef intent fill:#fee2e2,color:#7f1d1d,stroke:#ef4444,stroke-width:2px;
+    classDef design fill:#fef3c7,color:#78350f,stroke:#f59e0b,stroke-width:2px;
+    classDef continue fill:#dcfce7,color:#14532d,stroke:#22c55e,stroke-width:2px;
+    class A source;
+    class B decision;
+    class C intent;
+    class D design;
+    class E continue;
 ```
 
 Never treat a discovery as silent permission to expand scope.
