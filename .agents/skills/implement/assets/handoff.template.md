@@ -1,14 +1,15 @@
 # <Feature> handoff
 
-## Current task and state
+## Baseline and working-tree state
+
+## Current task and authoritative state
 
 ## Changes made
 
-## Validation run and results
+## Exact validation and results
 
 ## Decisions and plan deviations
 
 ## Remaining risks or blockers
 
-## Next ready task
-
+## Next eligible tasks

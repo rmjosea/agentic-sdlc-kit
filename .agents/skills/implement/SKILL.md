@@ -1,23 +1,34 @@
 ---
 name: implement
-description: Implement one ready task from an approved plan using small feedback loops, minimal changes, appropriate tests, and durable handoff state. Use when the user asks to execute, build, code, fix, or continue a planned task. Do not silently expand scope or implement unresolved blocked tasks.
+description: Implement one bounded change from an approved source artifact, one ready task from a task graph, or one confirmed direct-path request using small feedback loops, minimal changes, appropriate tests, and durable recovery state. Use when the user asks to execute, build, code, fix, or continue accepted work. Do not silently expand scope or implement unresolved blocked tasks.
 ---
 
-# Implement a Planned Task
+# Implement a Bounded Change
 
-Complete one ready task at a time and leave the repository in a verifiable state.
+Complete one bounded outcome at a time and leave the repository in a verifiable
+state.
 
 ## Select and bound
 
-1. Read `AGENTS.md`, the selected task, its spec, and only required contracts.
-2. Confirm dependencies are done and the task is not blocked.
+1. Read `AGENTS.md`, the selected source artifacts, and only required contracts.
+2. Select exactly one valid input:
+   - a `ready` task from `tasks.md`: re-read task state, confirm every
+     dependency is `done`, then transition it to `in-progress`;
+   - one bounded, decision-complete outcome from an approved spec or plan that
+     does not require a task graph: state the selected outcome and artifact
+     evidence;
+   - a direct-path change: confirm every direct-path condition in `AGENTS.md`
+     and state `Intent`, `Change`, and `Verification` inline.
 3. Inspect the affected code and tests before editing.
-4. State the task outcome, intended change surface, and validation.
+4. State the outcome, intended change surface, and validation.
 5. Stop for a material ambiguity; do not invent product or architecture choices.
 
-If execution reveals a change to the implementation design, update the plan
-before proceeding. If it changes required product behavior, stop and return the
-spec for amendment and approval; mark affected work stale.
+If execution changes **how**, update the durable plan or inline approach. When
+a design change affects task boundaries, dependencies, validation, or change
+surfaces, mark affected tasks `stale` and run `decompose-tasks` again before
+continuing. If execution changes **what**, stop and reconfirm the accepted
+intent; amend a spec when one exists or the expanded scope requires one. Mark
+affected durable work stale.
 
 ## Execute
 
@@ -35,18 +46,36 @@ failure is not explained by the current change.
 
 ## Verify
 
-Run the narrowest useful checks during iteration, then all task-relevant checks
-before completion. Compare observed behavior with the spec and task evidence.
+Run the narrowest useful checks during iteration, then all outcome-relevant checks
+before completion. Compare observed behavior with authoritative intent and the
+applicable artifact or inline evidence.
 
 Do not weaken, skip, or delete a failing check merely to obtain a green result.
 Report checks that cannot run and why.
 
 ## Close
 
-- Update task state only when completion evidence exists.
+- When a task graph exists, update task state only when completion evidence
+  exists, persist exact validation outcomes in task `Result` before marking it
+  `done`, and never use a failing or unrun required check to support `done`.
+- Without a task graph, record exact observed results in the final report or
+  required handoff. Failing or unrun required validation cannot support
+  completion.
+- After completion, when a task graph exists, move newly unblocked tasks to
+  `ready` only when every dependency is `done`, the blocker contains no
+  decision, safety, or external reason, and no material decision remains.
+- If a graph-backed task is interrupted, return it to `ready` only when retry
+  is safe; otherwise mark it `blocked` and record the reason.
 - Record deviations from the plan and their rationale.
-- Write or update `.work/<feature>/handoff.md` when another session or agent may
-  continue the work.
+- For direct-path work, self-check the final diff for scope, correctness, and
+  unintended changes. Run standalone `review` only when requested, required by
+  repository policy, or warranted by risk.
+- Write or update `.work/<feature>/handoff.md` whenever work stops unfinished
+  or another session or agent may continue. Treat `tasks.md` as task-state
+  truth and the handoff as a recovery snapshot.
+- When all work scoped to a source spec is complete with evidence, report that
+  it supports `implemented` and update the spec only when artifact maintenance
+  is authorized.
 - Summarize files changed, behavior delivered, checks run, results, risks, and
   the next ready task.
 

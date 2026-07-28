@@ -2,6 +2,10 @@
 
 ## Scope and evidence
 
+- Base:
+- Head or working-tree scope:
+- Authoritative intent:
+
 ## Review independence
 
 `independent | self-review`
@@ -15,9 +19,9 @@
 - Impact:
 - Recommended action:
 
-## Specification conformance
+## Intent conformance
 
-| Requirement | Task(s) | Evidence | Result |
+| Source item | Task(s) | Evidence | Result |
 |---|---|---|---|
 
 ## Verification results

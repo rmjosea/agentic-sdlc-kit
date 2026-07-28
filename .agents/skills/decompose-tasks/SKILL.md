@@ -10,23 +10,24 @@ modify production code or reopen settled technical decisions.
 
 ## Preconditions
 
-1. Read `AGENTS.md`, the approved plan, its source specs, and only the contracts
-   needed to understand delivery boundaries.
+1. Read `AGENTS.md`, the approved plan, its source intent, and only the
+   contracts needed to understand delivery boundaries.
 2. Require the plan status to be `approved` with no material open technical
    decision.
 3. Return to `plan` if decomposition exposes a missing or contradictory design.
-4. Return to `write-spec` if it exposes a change to required product behavior.
+4. Return to the source owner if it exposes a change to accepted behavior; use
+   `write-spec` only when a durable product contract is required.
 
 ## Build the graph
 
-1. Map each non-trivial requirement to one or more observable delivery outcomes.
+1. Map each non-trivial source item to one or more observable delivery outcomes.
 2. Create vertical tasks that each produce one coherent, verifiable result.
 3. Add enabling work only when a delivery task cannot safely absorb it.
 4. Identify dependencies from contracts, data flow, migrations, shared state,
    and required validation—not from an assumed coding order.
 5. Identify change-surface conflicts before marking tasks parallel.
-6. Confirm every requirement is covered and every task supports a requirement
-   or an explicit plan obligation.
+6. Confirm every source item is covered and every task supports one or an
+   explicit plan obligation.
 
 Avoid tasks named only after layers such as "backend", "frontend", or
 "database". Split a task when it has multiple outcomes, independent failure
@@ -38,24 +39,31 @@ Do not split work that must change atomically to remain correct.
 Choose one primary type:
 
 - `feature`: delivers observable behavior;
+- `bugfix`: restores accepted behavior by correcting a defect;
 - `enabler`: unlocks later delivery without standalone product behavior;
 - `migration`: changes persisted data, contracts, or compatibility state;
 - `verification`: provides independent evidence not owned by another task;
 - `operations`: changes build, deployment, observability, or runtime controls;
+- `maintenance`: improves internals without changing accepted behavior;
 - `documentation`: updates durable user or engineering guidance.
 
-Assign risk as `low`, `medium`, or `high` using `AGENTS.md`. Inherit the plan
-risk unless the task has a clear reason to differ.
+Assign risk as `low`, `medium`, or `high` using `AGENTS.md` and record one-line
+rationale. Inherit the plan risk unless the task has a clear reason to differ.
 
-Assign parallelism:
+Assign execution policy:
 
-- `parallel-safe`: dependencies are done and change surfaces do not conflict;
-- `parallel-after:<TASK-ID>`: safe only after the named contract or enabler;
-- `sequential`: ordering or shared mutation requires exclusive execution.
+- `parallel-safe`: may run with other eligible tasks after every dependency is
+  done, provided no active change surface or mutable resource conflicts;
+- `exclusive`: must run alone because shared mutation or coordination makes
+  concurrency unsafe.
 
-Parallel work must have no unresolved producer-consumer contract, overlapping
-files likely to conflict, competing migration order, or shared mutable state.
-When uncertain, prefer sequential execution and state the reason.
+Keep dependency order only in `Depends on`; do not duplicate it in execution
+policy. Record task conflicts symmetrically. When uncertain, prefer `exclusive`
+and state the reason.
+
+Execution policy describes safe scheduling, not task ownership. Without an
+external atomic coordinator, require a human or orchestrator to assign tasks
+before parallel agents start.
 
 ## Write
 
@@ -63,20 +71,24 @@ Use [assets/tasks.template.md](assets/tasks.template.md) and write
 `.work/<feature>/tasks.md`. Each task must include:
 
 - stable ID and outcome;
-- plan and requirement links;
+- plan and source-item links;
 - type, risk, and state;
-- dependencies and parallel classification;
+- dependencies, blocker reason, and execution policy;
 - expected change surface and conflicts;
-- completion evidence and validation method.
+- prospective acceptance evidence and validation commands;
+- actual result, initially `pending`.
 
 Use only `blocked`, `ready`, `in-progress`, `done`, or `stale` as task states.
-Only dependency-free, decision-complete tasks may start as `ready`.
+Only dependency-free, decision-complete tasks may start as `ready`; dependent
+tasks start `blocked` with their dependency IDs as the blocker. A decision,
+safety, or external blocker requires an explicit reason and resolution; it is
+never cleared merely because dependencies finish.
 
 ## Quality gate
 
 Verify:
 
-- all requirements and plan obligations are covered;
+- all source items and plan obligations are covered;
 - the graph is acyclic and has at least one ready task;
 - each task is independently understandable and verifiable;
 - no task contains a hidden product or architecture decision;

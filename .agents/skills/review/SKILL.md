@@ -1,6 +1,6 @@
 ---
 name: review
-description: Review a completed or in-progress change against both its originating specification and the repository's engineering standards, using diff evidence and executed checks. Use when the user asks for code review, implementation verification, acceptance review, pre-merge review, or an independent assessment of whether a change is correct and ready.
+description: Review a completed or in-progress change against its authoritative intent and the repository's engineering standards, using diff evidence and executed checks. Use when the user asks for code review, implementation verification, acceptance review, pre-merge review, or an independent assessment of whether a change is correct and ready, with or without a formal specification.
 ---
 
 # Review an Implementation
@@ -8,26 +8,31 @@ description: Review a completed or in-progress change against both its originati
 Review the actual diff and observed behavior. Do not rely on the implementer's
 summary as evidence.
 
+Review is non-mutating by default. Report findings without editing unless the
+user explicitly asks for fixes.
+
 State whether the review is independent or a self-review. Treat only a fresh
 session or agent that did not implement the change as independent. High-risk
-work cannot receive an `approved` verdict without independent review.
+work reviewed only by its implementer must receive `blocked`, not `approved`.
 
 ## Establish scope
 
-1. Resolve the comparison base or ask for it.
-2. Capture the diff, changed files, and commits from that fixed point.
-3. Locate the originating spec, plan, and relevant repository guidance.
+1. Resolve and record the fixed base/head or equivalent working-tree scope.
+2. Capture committed and uncommitted changes within that scope.
+3. Locate the authoritative intent: spec, accepted request, issue, contract, or
+   reproduced prior behavior; then locate any plan and repository guidance.
 4. Identify checks that can verify the acceptance criteria.
 
-If no specification exists, say so and review engineering quality without
-inventing product intent.
+If no spec exists, verify against the available authoritative intent. Do not
+invent missing intent; mark product conformance not applicable only when no
+reliable source exists.
 
-## Axis 1: specification conformance
+## Axis 1: intent conformance
 
 Check:
 
 - required behavior and acceptance criteria;
-- traceability from requirement IDs to tasks and evidence;
+- traceability from available source items to tasks and evidence;
 - missing, partial, or extra behavior;
 - business rules, failures, and edge cases;
 - externally observable quality constraints;
@@ -68,8 +73,15 @@ Do not invent findings to fill categories.
 
 Finish with one verdict:
 
-- `approved`
-- `changes-required`
-- `blocked`
+- `approved`: no unresolved finding requires an implementation change; advisory
+  low findings may remain;
+- `changes-required`: one or more findings must be corrected before approval;
+- `blocked`: required evidence, access, scope, or high-risk independence is
+  missing, so a reliable verdict is not possible.
+
+`approved` also requires no unresolved acceptance failure and all risk-required
+evidence. An approving review supports a source spec's `verified` transition;
+update it only when artifact maintenance is authorized. Independence is
+mandatory only for high-risk work.
 
 Use [assets/review.template.md](assets/review.template.md).

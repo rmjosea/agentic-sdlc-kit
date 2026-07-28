@@ -38,6 +38,10 @@ Record such decisions with a concise rationale instead.
 
 ## Workflow
 
+The workflow is a set of composable gates, not a mandatory pipeline. Use the
+least durable process that safely preserves intent, evidence, and
+recoverability.
+
 ```text
 idea -> shape-idea -> write-spec -> plan -> decompose-tasks -> implement -> review
 ```
@@ -46,36 +50,75 @@ idea -> shape-idea -> write-spec -> plan -> decompose-tasks -> implement -> revi
 - `write-spec`: persist approved product behavior as one or more cohesive specs.
 - `plan`: resolve technical decisions and define the implementation design.
 - `decompose-tasks`: turn an approved plan into an executable dependency graph.
-- `implement`: complete one ready task using short feedback loops.
-- `review`: assess spec conformance and engineering quality independently.
+- `implement`: complete one bounded direct, artifact-backed, or task-backed
+  outcome using short feedback loops.
+- `review`: assess intent conformance and engineering quality independently.
 - `create-skill`: create or improve skills without bloating agent context.
 
-Do not skip a stage for non-trivial work unless the required artifact or
-decision already exists. Trivial changes may use a lightweight inline plan.
+### Select only the gates that add value
+
+- **Direct path:** use `implement` without durable spec, plan, or task files only
+  when the accepted request is unambiguous, local, readily reversible, low risk,
+  and fits one focused session. State `Intent`, `Change`, and `Verification`
+  inline before editing, then self-check the final diff. Use standalone
+  `review` only when requested, required by repository policy, or warranted by
+  risk.
+- **Standard path:** use `shape-idea` for material uncertainty about **what**;
+  `write-spec` for new or durable product behavior; `plan` for non-obvious
+  **how**, cross-component effects, or compatibility and rollout decisions; and
+  `decompose-tasks` for multiple executable tasks, handoff across sessions, or
+  parallel work.
+- **Controlled path:** medium- or high-risk work requires a durable source of
+  accepted intent and an approved plan. Risk overrides apparent size.
+
+Do not use the direct path for new or changed business rules, public contracts,
+persistent-data semantics or migrations, trust boundaries, permissions,
+payments, privacy, destructive effects, or difficult rollback.
+Dependency and supply-chain changes also require the standard or controlled
+path unless repository policy explicitly classifies the exact update as low
+risk.
 
 ## Artifact boundaries
 
 - Specifications define **what** must be true and why it matters.
-- Plans define **how** the repository will satisfy approved specifications.
+- Plans define **how** the repository will satisfy authoritative intent.
 - Task graphs define **in what order** the approved plan can be implemented.
 - Technical contracts exist only when multiple tasks need them.
 - Temporary plans and handoffs belong under `.work/`.
 - Stable product specifications belong under `specs/`.
-- Specification states are `draft`, `approved`, `planned`, `implemented`, and
-  `verified`; advance them only when the corresponding evidence exists.
+- Specification states are `draft`, `approved`, optional `planned`,
+  `implemented`, and `verified`; advance them only when the corresponding
+  evidence exists. Skip `planned` when no durable technical plan adds value.
 - Code, tests, and executable checks are the final source of implementation
   truth; prose does not override observed behavior.
 
 ## Traceability and change control
 
-- Give non-trivial requirements stable IDs and link every task to the
-  requirements it advances.
-- Link plans to their source specs and reviews to the requirements they verify.
-- If implementation changes **how**, update the plan before continuing.
-- If implementation changes **what**, stop, amend and reapprove the spec, then
-  mark affected plans and tasks stale until they are reconciled.
+- For the direct path, preserve `accepted intent -> diff -> checks`.
+- Link every durable artifact that exists to its authoritative source and
+  downstream evidence; do not manufacture missing gates. Valid chains include
+  `spec -> diff -> review evidence`, `intent -> plan -> diff -> review
+  evidence`, and `intent|spec -> plan -> tasks -> review evidence`. Give
+  non-trivial spec requirements stable IDs when a spec exists.
+- If implementation changes **how**, update the durable plan or inline approach
+  before continuing.
+- If implementation changes **what**, stop and reconfirm intent. Amend and
+  reapprove a spec when one exists or the changed scope now requires one; mark
+  affected plans and tasks stale until reconciled.
 - Do not treat an implementation discovery as silent authorization to expand
   product scope.
+
+Lifecycle evidence:
+
+- approved product acceptance supports `draft -> approved`;
+- an approved plan, when needed, supports `approved -> planned`;
+- completed scoped work with recorded results supports
+  `approved|planned -> implemented`;
+- an approving evidence-based review supports `implemented -> verified`.
+
+Each stage reports the transition it supports. Update the spec state when
+artifact maintenance is within the authorized scope; otherwise report it as an
+eligible transition rather than mutating files during a read-only review.
 
 ## Risk and independent review
 
@@ -84,11 +127,19 @@ changes involving data, compatibility, trust boundaries, money, privacy,
 permissions, destructive effects, or difficult rollback.
 
 - Low risk requires proportionate task-level verification.
-- Medium risk requires regression and failure-path evidence.
-- High risk requires an independent review from a fresh session or agent.
+- Medium risk requires regression and relevant failure-path evidence when
+  applicable.
+- High risk additionally requires rollback or recovery evidence when applicable
+  and an independent review from a fresh session or agent.
 
 A review by the implementer is a self-review. Label it accurately and never
 present it as independent evidence.
+
+Task states are coordination guidance, not atomic claims. Without an external
+coordinator, a human or orchestrator must assign tasks before parallel agents
+start; agents must not race to self-claim `ready` work. `parallel-safe` means
+work can be scheduled concurrently after assignment, not that concurrent
+self-claiming is safe.
 
 ## Progressive disclosure
 

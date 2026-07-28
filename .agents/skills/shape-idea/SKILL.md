@@ -19,7 +19,8 @@ conversational and do not create or edit files.
 7. Continue until no material ambiguity remains.
 8. Stress-test the result with realistic scenarios and edge cases.
 9. Present the final understanding using the output contract below.
-10. Ask the user to confirm that it is correct and complete enough to specify.
+10. Ask the user to confirm that it is correct and ready for the next
+    appropriate workflow gate.
 
 Do not use a fixed questionnaire. Choose each next question from the idea,
 previous answers, repository evidence, contradictions, and unresolved risks.
@@ -68,5 +69,5 @@ before requesting final approval.
 - Do not design implementation details unless they are explicit constraints.
 - Do not invoke `write-spec` automatically.
 - Do not treat silence as approval.
-- Do not finish while material contradictions or unanswered questions remain.
-
+- Stop when remaining uncertainty is non-material and recorded as an explicit
+  assumption. Do not continue questioning solely to eliminate harmless detail.

@@ -4,12 +4,18 @@ A lightweight, agent-agnostic software development harness built around a small
 set of composable [Agent Skills](https://agentskills.io/) and a durable
 `AGENTS.md` engineering contract.
 
-The kit keeps human judgment where it matters and gives coding agents a clear,
-verifiable path from an idea to reviewed software:
+The kit keeps human judgment where it matters and gives coding agents a set of
+composable gates from an idea to reviewed software:
 
 ```text
 idea -> shape-idea -> write-spec -> plan -> decompose-tasks -> implement -> review
 ```
+
+This is not a mandatory pipeline. A clear, local, low-risk change can use
+`implement` with an inline final diff self-check; standalone `review` remains
+available when requested or required. Each earlier gate is used only when
+uncertainty, durable product intent, technical design, coordination, or risk
+justifies it.
 
 `create-skill` is a supporting capability for extending the kit without
 degrading its quality or context efficiency.
@@ -20,9 +26,9 @@ degrading its quality or context efficiency.
 - Ask one clear question at a time when a material decision is unresolved.
 - Recommend a default and explain its main trade-off.
 - Keep specifications focused on **what** must be true.
-- Keep technical design and task decomposition in the plan.
+- Keep technical design in plans and execution order in task graphs.
 - Implement one small, verifiable task at a time.
-- Review both specification conformance and engineering quality.
+- Review both intent conformance and engineering quality.
 - Load instructions progressively; do not spend context on irrelevant guidance.
 - Prefer simple, surgical changes over speculative abstractions.
 - Never claim success without evidence.
@@ -80,7 +86,17 @@ Use write-spec to persist our approved understanding.
 Use plan for specs/001-example/spec.md.
 Use decompose-tasks for the approved implementation plan.
 Use implement for the next ready task.
-Use review against main and the originating spec.
+Use review against main and the authoritative intent.
+```
+
+An approved spec or plan with one bounded outcome can go directly to
+`implement`; do not create a one-node task graph.
+
+For a direct-path change:
+
+```text
+Use implement for this low-risk local change. State intent, change, and
+verification inline; do not create durable workflow artifacts.
 ```
 
 Agents that support model-driven skill activation may select the skills

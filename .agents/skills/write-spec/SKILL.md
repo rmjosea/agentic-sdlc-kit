@@ -8,6 +8,10 @@ description: Persist an approved understanding of what a product or software cha
 Create the first stable artifact in the workflow. Define **what** must be true,
 not the implementation that will make it true.
 
+Do not create a spec merely because code will change. Use one when product
+behavior needs a durable acceptance contract; use the direct or plan-only path
+from `AGENTS.md` when that contract would add no value.
+
 ## Preconditions
 
 Require an explicitly approved conversational understanding or equivalent
@@ -48,17 +52,23 @@ only the capability list, state, and functional dependencies. Use
 Assign each spec a stable ID and one lifecycle state:
 
 ```text
-draft -> approved -> planned -> implemented -> verified
+draft -> approved -> [planned] -> implemented -> verified
 ```
 
 - `draft`: still being authored or awaiting product approval.
 - `approved`: product behavior and acceptance criteria are confirmed.
 - `planned`: an approved technical plan covers the spec.
-- `implemented`: the implementation is complete but not independently verified.
+- `implemented`: the implementation is complete but not yet verified by review
+  evidence.
 - `verified`: review evidence confirms the acceptance criteria.
 
 Only advance a state when its evidence exists. Do not renumber an existing spec
 after its ID has been referenced by a plan, task, commit, or review.
+This skill owns `draft -> approved`; later workflow skills own subsequent
+transitions defined in `AGENTS.md`.
+
+`planned` is optional. Move directly from `approved` to `implemented` when the
+spec is simple enough that a durable technical plan would add no value.
 
 ## Content rules
 

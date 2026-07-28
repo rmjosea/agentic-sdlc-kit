@@ -7,6 +7,16 @@ description: Create, revise, or evaluate an Agent Skill that follows the open Ag
 
 Create the smallest reusable procedure that reliably changes agent behavior.
 
+## Select the mode
+
+- `create` or `revise`: change files only after responsibility and boundaries
+  are confirmed; report files changed and validation results.
+- `evaluate`: do not mutate by default; report evidence-backed findings by
+  severity, non-findings worth preserving, and `approved`,
+  `changes-required`, or `blocked`.
+- `benchmark`: define positive and adjacent-negative prompts, quality rubrics,
+  fresh-session procedure, baseline without the skill, and comparable results.
+
 ## Understand with examples
 
 1. Gather two or more realistic requests that should use the skill.
@@ -81,4 +91,3 @@ from observed failures rather than adding speculative instructions.
 
 Review the license of any adapted source. Prefer original wording. Preserve
 required notices and identify substantial borrowed material.
-

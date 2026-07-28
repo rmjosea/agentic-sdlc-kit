@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Design how an approved specification should be implemented in an existing or new codebase, resolving material technical decisions with the user one clear question at a time. Use when the user asks for architecture, technical design, an implementation plan, data model, API contract, migration plan, or test strategy. Do not decompose the design into executable tasks.
+description: Design how accepted product intent should be implemented in an existing or new codebase, resolving material technical decisions with the user one clear question at a time. Use when the user asks for architecture, technical design, an implementation plan, data model, API contract, migration plan, or test strategy, or when medium/high risk requires a durable plan. Accept a spec, issue, contract, or confirmed request as source intent. Do not decompose the design into executable tasks.
 ---
 
 # Plan an Implementation
@@ -10,7 +10,7 @@ Do not modify production code.
 
 ## Discover
 
-1. Read only the relevant specs and repository guidance.
+1. Read only the authoritative source intent and relevant repository guidance.
 2. Inspect the codebase, tests, dependencies, and established conventions.
 3. Identify constraints, reusable components, trust boundaries, and unknowns.
 4. Separate repository facts, confirmed constraints, assumptions, and choices.
@@ -59,11 +59,14 @@ after the user confirms the complete technical direction.
 
 Verify that:
 
-- the plan links to every source specification;
+- the plan links to every authoritative source;
 - requirements have a coherent implementation path;
 - risk is classified as `low`, `medium`, or `high`;
 - no unresolved material decision is hidden in the design;
 - the plan introduces no unnecessary infrastructure or abstraction.
 
-Do not create executable tasks. After the plan is approved, use
-`decompose-tasks`.
+When an approved plan fully covers a source spec, report that it supports the
+spec's `planned` transition and update it only when artifact maintenance is
+authorized. Do not create executable tasks. Use `decompose-tasks` only when the
+plan contains multiple independently executable tasks, requires cross-session
+handoff, or benefits from parallel execution.

@@ -6,26 +6,29 @@
 ## Source
 
 - Plan: PLAN-<NNN>
-- Specs: SPEC-<NNN>
+- Intent: <SPEC/REQ, issue, contract, or confirmed request>
 
 ## Tasks
 
 ### TASK-001: <Observable outcome>
 
 - Plan: PLAN-<NNN>
-- Requirements: REQ-001
+- Source items: <REQ-001 or other acceptance reference>
 - Type: feature
 - Risk: low
+- Risk rationale:
 - State: ready
 - Depends on: none
-- Parallel: parallel-safe
+- Blocker: none
+- Execution: parallel-safe
 - Change surface:
 - Conflicts with: none
-- Completion evidence:
-- Validation:
+- Acceptance evidence:
+- Validation commands/procedure:
+- Result: pending
 
 ## Coverage
 
-| Requirement | Tasks |
+| Source item | Tasks |
 |---|---|
 | REQ-001 | TASK-001 |

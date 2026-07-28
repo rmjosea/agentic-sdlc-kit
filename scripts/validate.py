@@ -123,7 +123,15 @@ def main() -> int:
     plan_template = (
         SKILLS_ROOT / "plan" / "assets" / "plan.template.md"
     ).read_text(encoding="utf-8")
-    for required in ("id: PLAN-", "specs:", "status: draft", "risk: low"):
+    for required in (
+        "id: PLAN-",
+        "sources:",
+        "status: draft",
+        "risk: low",
+        "risk_rationale:",
+        "## Source coverage",
+        "## Verification strategy",
+    ):
         if required not in plan_template:
             errors.append(f"Plan template missing field: {required}")
 
@@ -132,15 +140,18 @@ def main() -> int:
     ).read_text(encoding="utf-8")
     for required in (
         "Plan:",
-        "Requirements:",
+        "Source items:",
         "Type:",
         "Risk:",
+        "Risk rationale:",
         "State:",
         "Depends on:",
-        "Parallel:",
+        "Blocker:",
+        "Execution:",
         "Conflicts with:",
-        "Completion evidence:",
-        "Validation:",
+        "Acceptance evidence:",
+        "Validation commands/procedure:",
+        "Result: pending",
     ):
         if required not in task_template:
             errors.append(f"Task template missing field: {required}")
