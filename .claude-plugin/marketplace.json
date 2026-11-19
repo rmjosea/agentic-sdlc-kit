@@ -1,0 +1,23 @@
+{
+  "name": "agentic-sdlc-kit",
+  "owner": {
+    "name": "Agentic SDLC Kit"
+  },
+  "description": "A lightweight, evidence-driven development harness for coding agents.",
+  "plugins": [
+    {
+      "name": "agentic-sdlc-kit",
+      "source": "./",
+      "description": "Evidence-driven agent skills and SDLC harness (intent, specs, plans, tasks, implementation, review, setup).",
+      "category": "engineering",
+      "keywords": [
+        "engineering",
+        "sdlc",
+        "skills",
+        "spec-driven",
+        "tdd",
+        "code-review"
+      ]
+    }
+  ]
+}

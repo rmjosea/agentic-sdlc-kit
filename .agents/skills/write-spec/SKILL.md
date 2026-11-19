@@ -15,8 +15,9 @@ from `AGENTS.md` when that contract would add no value.
 ## Preconditions
 
 Require an explicitly approved conversational understanding or equivalent
-authoritative input. If material product ambiguity remains, return to
-`shape-idea`.
+source authority. Identify and link every authoritative input; do not treat
+repository behavior as product authority. If sources contradict or material
+product ambiguity remains, return to `shape-idea`.
 
 ## Choose spec boundaries
 
@@ -36,17 +37,27 @@ Before writing multiple specs, show the proposed boundaries, dependencies, and
 rationale. Ask for confirmation when the decomposition materially affects scope
 or delivery.
 
+## Resolve the specification root
+
+Resolve the destination only when this operation will inspect or write specs.
+Reject any `.agents/project.md` as unsupported before writing. If
+`.agents/project.json` is absent, use `specs/`. If it exists, validate it with
+`.agents/skills/setup/assets/project.schema.json` and apply
+`.agents/skills/setup/references/project-config.md`. Stop on any invalid config
+rather than guessing or falling back. Use recognized `roots.specs` as
+`<specs-root>`.
+
 ## Write
 
 Use [assets/spec.template.md](assets/spec.template.md). Remove sections that do
 not add information. Store:
 
 ```text
-specs/<NNN-capability>/spec.md
+<specs-root>/<NNN-capability>/spec.md
 ```
 
-When more than one spec exists, maintain a concise `specs/README.md` containing
-only the capability list, state, and functional dependencies. Use
+When more than one spec exists, maintain a concise `<specs-root>/README.md`
+containing only the capability list, state, and functional dependencies. Use
 [assets/spec-index.template.md](assets/spec-index.template.md).
 
 Assign each spec a stable ID and one lifecycle state:
@@ -69,6 +80,15 @@ transitions defined in `AGENTS.md`.
 
 `planned` is optional. Move directly from `approved` to `implemented` when the
 spec is simple enough that a durable technical plan would add no value.
+
+## Provenance rules
+
+Preserve source links in frontmatter and put only material, source-confirmed
+product why under `Confirmed rationale`; do not include implementation
+rationale. If why is unconfirmed, state `Unknown` rather than deriving it from
+code or outcomes. Keep repository evidence, assumptions, and agent inferences
+separate when they add useful context, and never promote them to requirements
+without confirmation. Do not copy source narratives or private chain-of-thought.
 
 ## Content rules
 
@@ -100,11 +120,14 @@ tasks, and reviews can trace it without copying its text.
 
 Before finishing, verify:
 
-- every requirement supports the stated outcome;
+- every requirement supports the stated outcome and an authoritative source;
+- sources and material confirmed rationale are linked, and unknown why is
+  explicit;
 - each acceptance criterion can be observed or tested;
 - terms are consistent and unambiguous;
 - no implementation preference is disguised as a requirement;
 - spec boundaries are cohesive and minimally coupled;
 - open questions are explicit and block planning when material.
-- frontmatter uses a stable ID, normalized state, and explicit dependencies;
+- frontmatter uses a stable ID, normalized state, source links, and explicit
+  dependencies;
 - the index matches the specs on disk when more than one spec exists.

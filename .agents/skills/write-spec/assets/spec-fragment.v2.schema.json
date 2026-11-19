@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentic-sdlc-kit:specification-fragment:v2",
+  "allOf": [
+    {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2"},
+    {
+      "type": "object",
+      "required": ["metadata", "h1", "sections", "local_ids", "references", "placeholders"],
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schema_version", "id", "type", "sources", "parent", "fragment_id"],
+          "properties": {
+            "schema_version": {"const": 2},
+            "id": {
+              "anyOf": [
+                {"type": "string", "pattern": "^SPEC-[0-9]+-FRAG-[0-9]+$"},
+                {"const": "<SPEC-FRAGMENT-ID>"}
+              ]
+            },
+            "type": {"const": "specification-fragment"},
+            "sources": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "anyOf": [
+                  {"type": "string", "pattern": "^SPEC-[0-9]+$"},
+                  {"const": "SPEC-<NNN>"}
+                ]
+              }
+            },
+            "parent": {
+              "anyOf": [
+                {"type": "string", "pattern": "^SPEC-[0-9]+$"},
+                {"const": "SPEC-<NNN>"}
+              ]
+            },
+            "fragment_id": {
+              "anyOf": [
+                {"type": "string", "pattern": "^FRAG-[0-9]+$"},
+                {"const": "<FRAGMENT-ID>"}
+              ]
+            }
+          }
+        },
+        "h1": {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2#/$defs/non_empty_string"},
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2#/$defs/non_empty_string"}
+        },
+        "local_ids": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "id"],
+                "properties": {
+                  "kind": {"const": "requirement"},
+                  "id": {"type": "string", "pattern": "^REQ-[0-9]+$"}
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "id"],
+                "properties": {
+                  "kind": {"const": "acceptance-criterion"},
+                  "id": {"type": "string", "pattern": "^AC-[0-9]+$"}
+                }
+              }
+            ]
+          }
+        },
+        "references": {"type": "array"},
+        "placeholders": {"type": "array"}
+      }
+    }
+  ]
+}

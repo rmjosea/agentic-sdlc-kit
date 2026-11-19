@@ -1,0 +1,730 @@
+{
+  "schema_version": 2,
+  "artifacts": [
+    {
+      "id": "approval-policy",
+      "format": "json",
+      "owner": {
+        "kind": "skill",
+        "name": "setup"
+      },
+      "template": "skills/setup/assets/project.template.json",
+      "schema": "skills/setup/assets/project.schema.json",
+      "lifecycle": null,
+      "root": {
+        "mode": "fixed",
+        "key": null,
+        "fallback": ".agents"
+      },
+      "path_patterns": [
+        ".agents/project.json"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    },
+    {
+      "id": "architecture-decision",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "domain-model"
+      },
+      "template": "skills/domain-model/assets/adr.template.md",
+      "schema": null,
+      "lifecycle": "adr-v1",
+      "root": {
+        "mode": "project",
+        "key": "adrs",
+        "fallback": null
+      },
+      "path_patterns": [
+        "<root>/<NNN-slug>.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "skills/domain-model/assets/adr.v2.template.md",
+          "schema": "skills/domain-model/assets/adr.v2.schema.json",
+          "lifecycle": "adr-v2",
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "compliance-event",
+      "format": "jsonl",
+      "owner": {
+        "kind": "module",
+        "name": "compliance"
+      },
+      "template": "modules/compliance/assets/audit-event.template.json",
+      "schema": "modules/compliance/assets/audit-event.schema.json",
+      "lifecycle": null,
+      "root": {
+        "mode": "colocated",
+        "key": null,
+        "fallback": null
+      },
+      "path_patterns": [
+        "<root>/<change-id>/audit.jsonl"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [
+        "compliance",
+        "enforcement",
+        "evidence"
+      ],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "modules/compliance/assets/v2/audit-event.v2.template.json",
+          "schema": "modules/compliance/assets/v2/audit-event.v2.schema.json",
+          "lifecycle": null,
+          "requires_modules": [
+            "compliance",
+            "enforcement",
+            "evidence"
+          ],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "domain-context",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "domain-model"
+      },
+      "template": "skills/domain-model/assets/glossary.template.md",
+      "schema": null,
+      "lifecycle": null,
+      "root": {
+        "mode": "project",
+        "key": "domain_context",
+        "fallback": null
+      },
+      "path_patterns": [
+        "<root>",
+        "<root>/CONTEXT.md"
+      ],
+      "split": {
+        "mode": "semantic",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "skills/domain-model/assets/glossary.v2.template.md",
+          "schema": "skills/domain-model/assets/glossary.v2.schema.json",
+          "lifecycle": "glossary-v2",
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "estimate",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "estimate-effort"
+      },
+      "template": null,
+      "schema": null,
+      "lifecycle": "shape-a",
+      "root": {
+        "mode": "fixed",
+        "key": null,
+        "fallback": "estimaciones"
+      },
+      "path_patterns": [
+        "<root>/<slug>/estimacion.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    },
+    {
+      "id": "evidence-record",
+      "format": "json",
+      "owner": {
+        "kind": "module",
+        "name": "evidence"
+      },
+      "template": "modules/evidence/assets/evidence.template.json",
+      "schema": "modules/evidence/assets/evidence.schema.json",
+      "lifecycle": "evidence-v1",
+      "root": {
+        "mode": "project",
+        "key": "evidence",
+        "fallback": null
+      },
+      "path_patterns": [
+        "<root>/<change-id>/evidence.json"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [
+        "evidence"
+      ],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "modules/evidence/assets/evidence.v2.template.json",
+          "schema": "modules/evidence/assets/evidence.v2.schema.json",
+          "lifecycle": "evidence-v2",
+          "requires_modules": [
+            "evidence"
+          ],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "feature-plan",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "plan-feature"
+      },
+      "template": "skills/plan-feature/assets/plan.template.md",
+      "schema": null,
+      "lifecycle": "shape-a",
+      "root": {
+        "mode": "fixed",
+        "key": null,
+        "fallback": "features"
+      },
+      "path_patterns": [
+        "<root>/<NNN-slug>/plan.md"
+      ],
+      "split": {
+        "mode": "semantic",
+        "warning_tokens": 3000
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    },
+    {
+      "id": "feature-spec",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "save-output"
+      },
+      "template": "skills/save-output/assets/spec.template.md",
+      "schema": null,
+      "lifecycle": "shape-a",
+      "root": {
+        "mode": "fixed",
+        "key": null,
+        "fallback": "features"
+      },
+      "path_patterns": [
+        "<root>/<NNN-slug>/spec.md"
+      ],
+      "split": {
+        "mode": "semantic",
+        "warning_tokens": 3000
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    },
+    {
+      "id": "feature-tasks",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "breakdown-tasks"
+      },
+      "template": "skills/breakdown-tasks/assets/tasks.template.md",
+      "schema": null,
+      "lifecycle": "shape-a",
+      "root": {
+        "mode": "fixed",
+        "key": null,
+        "fallback": "features"
+      },
+      "path_patterns": [
+        "<root>/<NNN-slug>/tasks.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    },
+    {
+      "id": "handoff",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "implement"
+      },
+      "template": "skills/implement/assets/handoff.template.md",
+      "schema": null,
+      "lifecycle": null,
+      "root": {
+        "mode": "project",
+        "key": "work",
+        "fallback": ".work"
+      },
+      "path_patterns": [
+        "<root>/<feature>/handoff.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "skills/implement/assets/handoff.v2.template.md",
+          "schema": "skills/implement/assets/handoff.v2.schema.json",
+          "lifecycle": null,
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "plan"
+      },
+      "template": "skills/plan/assets/plan.template.md",
+      "schema": null,
+      "lifecycle": "plan-v1",
+      "root": {
+        "mode": "project",
+        "key": "work",
+        "fallback": ".work"
+      },
+      "path_patterns": [
+        "<root>/<feature>/plan.md"
+      ],
+      "split": {
+        "mode": "semantic",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "skills/plan/assets/plan.v2.template.md",
+          "schema": "skills/plan/assets/plan.v2.schema.json",
+          "lifecycle": "plan-v2",
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "plan-fragment",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "plan"
+      },
+      "template": null,
+      "schema": null,
+      "lifecycle": null,
+      "root": {
+        "mode": "project",
+        "key": "work",
+        "fallback": ".work"
+      },
+      "path_patterns": [
+        "<root>/<feature>/fragments/<NNN-slug>.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "skills/plan/assets/plan-fragment.v2.template.md",
+          "schema": "skills/plan/assets/plan-fragment.v2.schema.json",
+          "lifecycle": null,
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "project-config",
+      "format": "json",
+      "owner": {
+        "kind": "skill",
+        "name": "setup"
+      },
+      "template": "skills/setup/assets/project.template.json",
+      "schema": "skills/setup/assets/project.schema.json",
+      "lifecycle": null,
+      "root": {
+        "mode": "fixed",
+        "key": null,
+        "fallback": ".agents"
+      },
+      "path_patterns": [
+        ".agents/project.json"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    },
+    {
+      "id": "pull-request-draft",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "contribute"
+      },
+      "template": "skills/contribute/assets/pull-request.template.md",
+      "schema": null,
+      "lifecycle": null,
+      "root": {
+        "mode": "caller-selected",
+        "key": "work",
+        "fallback": ".work"
+      },
+      "path_patterns": [
+        "<root>/<feature>/pull-request.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    },
+    {
+      "id": "review-report",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "review"
+      },
+      "template": "skills/review/assets/review.template.md",
+      "schema": null,
+      "lifecycle": null,
+      "root": {
+        "mode": "caller-selected",
+        "key": "work",
+        "fallback": ".work"
+      },
+      "path_patterns": [
+        "<root>/<feature>/review.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "evidence-v2",
+          "schema_version": 2,
+          "template": "skills/review/assets/review-with-evidence.v2.template.md",
+          "schema": "skills/review/assets/review-with-evidence.v2.schema.json",
+          "lifecycle": null,
+          "requires_modules": [
+            "evidence"
+          ],
+          "forbids_sections": [
+            "Acceptance coverage",
+            "Authoritative sources",
+            "Change contract and review focus",
+            "Checks and evidence",
+            "Reviewer role and independence",
+            "Risk",
+            "Scope",
+            "Selected quality signals"
+          ]
+        },
+        {
+          "id": "standalone-v2",
+          "schema_version": 2,
+          "template": "skills/review/assets/review-standalone.v2.template.md",
+          "schema": "skills/review/assets/review-standalone.v2.schema.json",
+          "lifecycle": null,
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "source-fingerprint-map",
+      "format": "json",
+      "owner": {
+        "kind": "skill",
+        "name": "plan"
+      },
+      "template": null,
+      "schema": null,
+      "lifecycle": null,
+      "root": {
+        "mode": "project",
+        "key": "work",
+        "fallback": ".work"
+      },
+      "path_patterns": [
+        "<root>/<feature>/source-items.json"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": null,
+          "schema": "skills/plan/assets/source-fingerprint-map.schema.json",
+          "lifecycle": null,
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "specification",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "write-spec"
+      },
+      "template": "skills/write-spec/assets/spec.template.md",
+      "schema": null,
+      "lifecycle": "spec-v1",
+      "root": {
+        "mode": "project",
+        "key": "specs",
+        "fallback": "specs"
+      },
+      "path_patterns": [
+        "<root>/<NNN-slug>/spec.md"
+      ],
+      "split": {
+        "mode": "semantic",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "skills/write-spec/assets/spec.v2.template.md",
+          "schema": "skills/write-spec/assets/spec.v2.schema.json",
+          "lifecycle": "spec-v2",
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "specification-fragment",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "write-spec"
+      },
+      "template": null,
+      "schema": null,
+      "lifecycle": null,
+      "root": {
+        "mode": "project",
+        "key": "specs",
+        "fallback": "specs"
+      },
+      "path_patterns": [
+        "<root>/<NNN-slug>/fragments/<NNN-slug>.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "skills/write-spec/assets/spec-fragment.v2.template.md",
+          "schema": "skills/write-spec/assets/spec-fragment.v2.schema.json",
+          "lifecycle": null,
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "specification-index",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "write-spec"
+      },
+      "template": "skills/write-spec/assets/spec-index.template.md",
+      "schema": null,
+      "lifecycle": null,
+      "root": {
+        "mode": "project",
+        "key": "specs",
+        "fallback": "specs"
+      },
+      "path_patterns": [
+        "<root>/README.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    },
+    {
+      "id": "task-graph",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "decompose-tasks"
+      },
+      "template": "skills/decompose-tasks/assets/tasks.template.md",
+      "schema": null,
+      "lifecycle": "task-v1",
+      "root": {
+        "mode": "project",
+        "key": "work",
+        "fallback": ".work"
+      },
+      "path_patterns": [
+        "<root>/<feature>/tasks.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": [
+        {
+          "id": "v2",
+          "schema_version": 2,
+          "template": "skills/decompose-tasks/assets/tasks.v2.template.md",
+          "schema": "skills/decompose-tasks/assets/tasks.v2.schema.json",
+          "lifecycle": "task-v2",
+          "requires_modules": [],
+          "forbids_sections": []
+        }
+      ]
+    },
+    {
+      "id": "user-journey",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "save-output"
+      },
+      "template": "skills/save-output/assets/user-journey.template.md",
+      "schema": null,
+      "lifecycle": "shape-a",
+      "root": {
+        "mode": "fixed",
+        "key": null,
+        "fallback": "journeys"
+      },
+      "path_patterns": [
+        "<root>/<feature>/<slug>.md"
+      ],
+      "split": {
+        "mode": "semantic",
+        "warning_tokens": 3000
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    },
+    {
+      "id": "user-story",
+      "format": "markdown",
+      "owner": {
+        "kind": "skill",
+        "name": "save-output"
+      },
+      "template": "skills/save-output/assets/user-story.template.md",
+      "schema": null,
+      "lifecycle": "shape-a",
+      "root": {
+        "mode": "fixed",
+        "key": null,
+        "fallback": "features"
+      },
+      "path_patterns": [
+        "<root>/<NNN-slug>/stories/<slug>.md"
+      ],
+      "split": {
+        "mode": "never",
+        "warning_tokens": null
+      },
+      "writable_schema_version": 2,
+      "requires_modules": [],
+      "variants": []
+    }
+  ]
+}

@@ -10,11 +10,13 @@ conversational and do not create or edit files.
 
 ## Process
 
-1. Restate the initial idea in one concise paragraph.
-2. Inspect the repository only when existing behavior constrains the idea.
-3. Identify the highest-impact unresolved decision.
-4. Apply the human decision protocol from `AGENTS.md`.
-5. Ask one question and wait for the answer.
+1. Restate the initial idea and identify its authoritative source or input.
+2. Inspect relevant source material and, only when existing behavior constrains
+   the idea, focused repository evidence. Surface contradictions; do not infer
+   intent or rationale from implementation.
+3. Classify unconfirmed premises as assumptions, agent inferences, or unknowns.
+4. Identify the highest-impact unresolved decision.
+5. Apply the human decision protocol from `AGENTS.md`: ask one question and wait.
 6. Update the working understanding after every answer.
 7. Continue until no material ambiguity remains.
 8. Stress-test the result with realistic scenarios and edge cases.
@@ -48,6 +50,7 @@ Present, in the user's language:
 ```markdown
 ## Shared understanding
 
+### Authoritative inputs
 ### Problem
 ### Desired outcome
 ### Users and scenarios
@@ -55,13 +58,17 @@ Present, in the user's language:
 ### Out of scope
 ### Constraints
 ### Acceptance signals
-### Confirmed decisions
-### Assumptions
+### Confirmed decisions and rationale
+### Repository evidence
+### Assumptions and agent inferences
+### Unknowns
 ### Remaining questions
 ```
 
 Omit empty sections except `Remaining questions`; set that section to `None`
-before requesting final approval.
+before requesting final approval. Preserve authoritative inputs and material
+confirmed decisions with concise, source-linked rationale. If why is not
+confirmed, record it under `Unknowns`; repository evidence is not a substitute.
 
 ## Boundaries
 

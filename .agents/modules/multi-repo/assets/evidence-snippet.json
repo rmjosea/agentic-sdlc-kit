@@ -1,0 +1,26 @@
+{
+  "repository_scope": [
+    {
+      "repository_id": "current",
+      "base": null,
+      "head": null,
+      "committed_range": null,
+      "uncommitted_entries": [],
+      "snapshot_sha256": null
+    }
+  ],
+  "requirement_coverage": [
+    {
+      "repository_ids": [
+        "current"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "repository_ids": [
+        "current"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentic-sdlc-kit:artifact-catalog:v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifacts"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "artifacts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/artifact"}
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "safe_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*//)(?!.*\\/$)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*\\\\)[^\\u0000-\\u001F\\u007F]+$"
+    },
+    "nullable_safe_path": {
+      "oneOf": [
+        {"$ref": "#/$defs/safe_path"},
+        {"type": "null"}
+      ]
+    },
+    "sorted_names": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/name"}
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name"],
+      "properties": {
+        "kind": {"enum": ["skill", "module"]},
+        "name": {"$ref": "#/$defs/name"}
+      }
+    },
+    "root": {
+      "oneOf": [
+        {"$ref": "#/$defs/fixed_root"},
+        {"$ref": "#/$defs/project_root"},
+        {"$ref": "#/$defs/colocated_root"},
+        {"$ref": "#/$defs/caller_selected_root"}
+      ]
+    },
+    "fixed_root": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "key", "fallback"],
+      "properties": {
+        "mode": {"const": "fixed"},
+        "key": {"type": "null"},
+        "fallback": {"$ref": "#/$defs/safe_path"}
+      }
+    },
+    "project_root": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "key", "fallback"],
+      "properties": {
+        "mode": {"const": "project"},
+        "key": {"enum": ["specs", "work", "adrs", "evidence", "domain_context"]},
+        "fallback": {"$ref": "#/$defs/nullable_safe_path"}
+      }
+    },
+    "colocated_root": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "key", "fallback"],
+      "properties": {
+        "mode": {"const": "colocated"},
+        "key": {"type": "null"},
+        "fallback": {"type": "null"}
+      }
+    },
+    "caller_selected_root": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "key", "fallback"],
+      "properties": {
+        "mode": {"const": "caller-selected"},
+        "key": {"enum": ["specs", "work", "adrs", "evidence", "domain_context"]},
+        "fallback": {"$ref": "#/$defs/nullable_safe_path"}
+      }
+    },
+    "split": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "warning_tokens"],
+      "properties": {
+        "mode": {"enum": ["never", "semantic"]},
+        "warning_tokens": {
+          "oneOf": [
+            {"type": "integer", "minimum": 1},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "schema_version", "template", "schema", "lifecycle", "requires_modules", "forbids_sections"],
+      "properties": {
+        "id": {"$ref": "#/$defs/name"},
+        "schema_version": {"type": "integer", "minimum": 1},
+        "template": {"$ref": "#/$defs/nullable_safe_path"},
+        "schema": {"$ref": "#/$defs/nullable_safe_path"},
+        "lifecycle": {
+          "oneOf": [
+            {"$ref": "#/$defs/name"},
+            {"type": "null"}
+          ]
+        },
+        "requires_modules": {"$ref": "#/$defs/sorted_names"},
+        "forbids_sections": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+          }
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "format",
+        "owner",
+        "template",
+        "schema",
+        "lifecycle",
+        "root",
+        "path_patterns",
+        "split",
+        "writable_schema_version",
+        "requires_modules",
+        "variants"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/name"},
+        "format": {"enum": ["markdown", "json", "jsonl"]},
+        "owner": {"$ref": "#/$defs/owner"},
+        "template": {"$ref": "#/$defs/nullable_safe_path"},
+        "schema": {"$ref": "#/$defs/nullable_safe_path"},
+        "lifecycle": {
+          "oneOf": [
+            {"$ref": "#/$defs/name"},
+            {"type": "null"}
+          ]
+        },
+        "root": {"$ref": "#/$defs/root"},
+        "path_patterns": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/safe_path"}
+        },
+        "split": {"$ref": "#/$defs/split"},
+        "writable_schema_version": {"type": "integer", "minimum": 1},
+        "requires_modules": {"$ref": "#/$defs/sorted_names"},
+        "variants": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/variant"}
+        }
+      }
+    }
+  }
+}

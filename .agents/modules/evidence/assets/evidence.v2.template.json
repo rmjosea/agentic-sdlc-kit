@@ -1,0 +1,88 @@
+{
+  "schema_version": 2,
+  "id": "EVIDENCE-901",
+  "change_id": "TASK-208",
+  "authoritative_sources": [
+    {"id": "SPEC-002", "reference": "specs/002-harness-v2/spec.md"}
+  ],
+  "lifecycle": {
+    "status": "in-progress",
+    "transition": "not-requested",
+    "evidence_references": ["accepted-scope"]
+  },
+  "risk": {"level": "low", "rationale": "The example is bounded and reversible."},
+  "change_contract": {
+    "intent": "Demonstrate the evidence v2 contract.",
+    "confirmed_why": "SPEC-002#REQ-032",
+    "scope": "One repository and one requirement.",
+    "expected_evidence": ["Focused check"],
+    "agent_roles": ["declared-implementer", "self-reviewer"],
+    "review_focus": ["Evidence truthfulness"]
+  },
+  "repository_scope": [
+    {
+      "repository_id": "current",
+      "base": null,
+      "head": null,
+      "committed_range": null,
+      "uncommitted_entries": [],
+      "snapshot_sha256": null
+    }
+  ],
+  "source_seals": [
+    {
+      "artifact_id": "SPEC-002",
+      "overall_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "item_digests": {"SPEC-002#REQ-032": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}
+    }
+  ],
+  "requirement_coverage": [
+    {
+      "requirement_id": "SPEC-002#REQ-032",
+      "repository_ids": ["current"],
+      "status": "partial",
+      "implementation_references": [],
+      "evidence_references": ["scoped-check"]
+    }
+  ],
+  "quality_signals": [
+    {"signal": "Correctness", "disposition": "N/A", "trigger": "No executed evidence is available yet.", "evidence_references": []},
+    {"signal": "Security", "disposition": "N/A", "trigger": "No trust boundary changes.", "evidence_references": []},
+    {"signal": "Compatibility", "disposition": "N/A", "trigger": "The v1 contract remains active.", "evidence_references": []},
+    {"signal": "Maintainability", "disposition": "N/A", "trigger": "No executed evidence is available yet.", "evidence_references": []},
+    {"signal": "Performance", "disposition": "N/A", "trigger": "No runtime hot path changes.", "evidence_references": []},
+    {"signal": "Accessibility", "disposition": "N/A", "trigger": "No user interaction changes.", "evidence_references": []},
+    {"signal": "Observability", "disposition": "N/A", "trigger": "No operational path changes.", "evidence_references": []},
+    {"signal": "Cost", "disposition": "N/A", "trigger": "No metered resource changes.", "evidence_references": []},
+    {"signal": "Understandability", "disposition": "N/A", "trigger": "No executed evidence is available yet.", "evidence_references": []}
+  ],
+  "checks": [
+    {
+      "id": "scoped-check",
+      "requirement_ids": ["SPEC-002#REQ-032"],
+      "repository_ids": ["current"],
+      "kind": "scoped",
+      "required": true,
+      "applicability": "applicable",
+      "not_applicable_reason": null,
+      "status": "not-run",
+      "observed_result": null,
+      "evidence_class": null,
+      "output_reference": null
+    }
+  ],
+  "review": {
+    "reviewer_role": "self-reviewer",
+    "reviewer_id": "declared-implementer",
+    "implementers": ["declared-implementer"],
+    "prior_participation": ["implementation"],
+    "fresh_context": false,
+    "independence": "self-review",
+    "independence_basis": "The reviewer implemented the change.",
+    "verdict": "blocked",
+    "reference": "review.md"
+  },
+  "known_limits": "not-tracked",
+  "remaining_risks": ["Required checks remain pending."],
+  "follow_ups": ["Run the required check."]
+}

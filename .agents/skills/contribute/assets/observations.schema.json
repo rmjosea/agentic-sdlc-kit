@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentic-sdlc-kit:contribution-observations:v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "checks"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "checks": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {"$ref": "#/$defs/check"}
+    }
+  },
+  "$defs": {
+    "text": {"type": "string", "minLength": 1, "maxLength": 500},
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "scope", "status", "evidence_reference"],
+      "properties": {
+        "name": {"$ref": "#/$defs/text"},
+        "scope": {"$ref": "#/$defs/text"},
+        "status": {"enum": ["passed", "failed", "not-run"]},
+        "evidence_reference": {
+          "oneOf": [{"$ref": "#/$defs/text"}, {"type": "null"}]
+        }
+      }
+    }
+  }
+}

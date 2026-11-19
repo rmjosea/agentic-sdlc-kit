@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentic-sdlc-kit:project-config:v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "roots",
+    "repositories",
+    "enabled_modules",
+    "tracker",
+    "agent",
+    "review",
+    "approval_policy",
+    "contribution"
+  ],
+  "properties": {
+    "schema_version": {"const": 2},
+    "roots": {"$ref": "#/$defs/roots"},
+    "repositories": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/repository"}
+    },
+    "enabled_modules": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/name"}
+    },
+    "tracker": {"$ref": "#/$defs/tracker"},
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {"mode": {"enum": ["guided", "autonomous-within-rules"]}}
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {"mode": {"enum": ["risk-based", "always-independent"]}}
+    },
+    "approval_policy": {"$ref": "#/$defs/approval_policy"},
+    "contribution": {"$ref": "#/$defs/contribution"}
+  },
+  "$defs": {
+    "string": {"type": "string", "minLength": 1, "maxLength": 500},
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "path": {"$ref": "#/$defs/string"},
+    "nullable_path": {"oneOf": [{"$ref": "#/$defs/path"}, {"type": "null"}]},
+    "nullable_string": {"oneOf": [{"$ref": "#/$defs/string"}, {"type": "null"}]},
+    "roots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["specs", "work", "adrs", "evidence", "domain_context"],
+      "properties": {
+        "specs": {"$ref": "#/$defs/path"},
+        "work": {"$ref": "#/$defs/path"},
+        "adrs": {"$ref": "#/$defs/nullable_path"},
+        "evidence": {"$ref": "#/$defs/nullable_path"},
+        "domain_context": {"$ref": "#/$defs/nullable_path"}
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "remote"],
+      "properties": {
+        "id": {"$ref": "#/$defs/name"},
+        "path": {"$ref": "#/$defs/path"},
+        "remote": {"$ref": "#/$defs/nullable_string"}
+      }
+    },
+    "tracker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "location", "labels"],
+      "properties": {
+        "kind": {"$ref": "#/$defs/name"},
+        "location": {"$ref": "#/$defs/nullable_string"},
+        "labels": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/string"}
+        }
+      }
+    },
+    "role_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "minimum"],
+      "properties": {
+        "role": {"$ref": "#/$defs/name"},
+        "minimum": {"type": "integer", "minimum": 1, "maximum": 100}
+      }
+    },
+    "approval_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["risk", "action", "required_roles", "independent"],
+      "properties": {
+        "risk": {"enum": ["low", "medium", "high"]},
+        "action": {"$ref": "#/$defs/name"},
+        "required_roles": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/role_requirement"}
+        },
+        "independent": {"type": "boolean"}
+      }
+    },
+    "approval_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rules"],
+      "properties": {
+        "rules": {
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/approval_rule"}
+        }
+      }
+    },
+    "contribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit_mode", "base_branch", "required_trailers", "pull_request_template", "merge_strategy"],
+      "properties": {
+        "commit_mode": {"enum": ["discover", "classic", "conventional"]},
+        "base_branch": {"$ref": "#/$defs/nullable_string"},
+        "required_trailers": {
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "pattern": "^[A-Za-z0-9-]+$"
+          }
+        },
+        "pull_request_template": {"$ref": "#/$defs/nullable_path"},
+        "merge_strategy": {"enum": ["unknown", "merge", "squash", "rebase"]}
+      }
+    }
+  }
+}

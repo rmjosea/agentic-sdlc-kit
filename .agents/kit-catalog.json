@@ -1,0 +1,132 @@
+{
+  "schema_version": 2,
+  "kit_version": "2.1.0",
+  "skill_groups": {
+    "core": [
+      "drill-docs",
+      "save-output",
+      "judge-spec",
+      "plan-feature",
+      "breakdown-tasks",
+      "implement",
+      "close-spec"
+    ],
+    "utilities": [
+      "git-conventions",
+      "create-skill",
+      "agents-creator",
+      "setup",
+      "ask-kit",
+      "contribute"
+    ],
+    "optional": [
+      "estimate-effort",
+      "domain-model",
+      "review",
+      "shape-idea",
+      "write-spec",
+      "plan",
+      "decompose-tasks"
+    ]
+  },
+  "modules": [
+    {
+      "name": "evidence",
+      "description": "Structured, risk-proportionate change evidence",
+      "depends_on": []
+    },
+    {
+      "name": "enforcement",
+      "description": "Deterministic, read-only repository consistency checks",
+      "depends_on": []
+    },
+    {
+      "name": "multi-repo",
+      "description": "Coordination across existing local repository checkouts",
+      "depends_on": []
+    },
+    {
+      "name": "compliance",
+      "description": "Declared approvals and durable auditable traceability",
+      "depends_on": [
+        "evidence",
+        "enforcement"
+      ]
+    }
+  ],
+  "global_resources": [
+    "AGENTS.md",
+    ".agents/artifact-catalog.json",
+    ".agents/conventions/change-lanes.md",
+    ".agents/conventions/composition.md",
+    ".agents/conventions/context-cleanup.md",
+    ".agents/conventions/conventions.md",
+    ".agents/conventions/frontmatter-schema.md",
+    ".agents/conventions/how-to-invoke-skills.md",
+    ".agents/conventions/loading-recipes.md",
+    ".agents/conventions/naming-and-language.md",
+    ".agents/conventions/output-splitting.md",
+    ".agents/conventions/progressive-disclosure.md",
+    ".agents/conventions/runtimes.md",
+    ".agents/conventions/security.md",
+    ".agents/conventions/skill-schema.md",
+    ".agents/indexes/by-intent.md",
+    ".agents/kit-catalog.json",
+    ".agents/schemas/artifact-catalog.schema.json",
+    ".agents/schemas/kit-catalog.schema.json",
+    ".agents/schemas/manifest.schema.json",
+    ".agents/schemas/markdown-document.schema.json",
+    ".agents/tools/check_artifact_ids.py",
+    ".agents/tools/fingerprint_artifact.py"
+  ],
+  "profiles": {
+    "default": {
+      "skills": [
+        "drill-docs",
+        "save-output",
+        "judge-spec",
+        "plan-feature",
+        "breakdown-tasks",
+        "implement",
+        "close-spec",
+        "git-conventions",
+        "create-skill",
+        "agents-creator",
+        "setup",
+        "ask-kit",
+        "contribute"
+      ],
+      "modules": []
+    },
+    "full": {
+      "skills": [
+        "drill-docs",
+        "save-output",
+        "judge-spec",
+        "plan-feature",
+        "breakdown-tasks",
+        "implement",
+        "close-spec",
+        "git-conventions",
+        "create-skill",
+        "agents-creator",
+        "setup",
+        "ask-kit",
+        "contribute",
+        "estimate-effort",
+        "domain-model",
+        "review",
+        "shape-idea",
+        "write-spec",
+        "plan",
+        "decompose-tasks"
+      ],
+      "modules": [
+        "evidence",
+        "enforcement",
+        "multi-repo",
+        "compliance"
+      ]
+    }
+  }
+}

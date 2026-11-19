@@ -1,170 +1,70 @@
 #!/usr/bin/env python3
-"""Validate the portable Agent Skills in this repository."""
+"""Compatibility entrypoint for the source validator."""
 
 from __future__ import annotations
 
-import re
-import sys
 from pathlib import Path
 
+try:
+    from scripts.validation import artifacts, distribution, documentation, semantics
+except ModuleNotFoundError:
+    # Direct ``python3 scripts/validate.py`` invocation.
+    from validation import artifacts, distribution, documentation, semantics
 
-ROOT = Path(__file__).resolve().parents[1]
-SKILLS_ROOT = ROOT / ".agents" / "skills"
-NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-LINK_RE = re.compile(r"\[[^\]]+\]\((?!https?://|#)([^)]+)\)")
-EXPECTED = {
-    "shape-idea",
-    "write-spec",
-    "plan",
-    "decompose-tasks",
-    "implement",
-    "review",
-    "create-skill",
-}
-PROVIDER_PATHS = (".claude/", ".cursor/", ".codex/")
-SPEC_STATES = {"draft", "approved", "planned", "implemented", "verified"}
+ROOT = semantics.ROOT
 
+# Explicit compatibility surface consumed by tests and source tooling.
+_EXPORTS = (
+    "Any", "CATALOG_SCHEMA_VERSION", "COMMON_CREDENTIAL_RE",
+    "COMPLIANCE_EVENT_DEF_FIELDS", "COMPLIANCE_EVENT_FIELDS",
+    "COMPLIANCE_TIMESTAMP_RE", "DuplicateJSONObjectKey", "EVIDENCE_CHECK_KINDS",
+    "EVIDENCE_CHECK_STATUSES", "EVIDENCE_DEF_FIELDS", "EVIDENCE_FIELDS",
+    "EVIDENCE_REVISION_RE", "EVIDENCE_SCHEMA_VERSION", "EVIDENCE_SHA256_RE",
+    "LINK_RE", "MARKDOWN_DESTINATION_RE", "NAME_RE", "Optional",
+    "PERSONAL_DATA_RE", "PROJECT_CONFIG_PATH", "PROJECT_CONFIG_SCHEMA_VERSION",
+    "PROJECT_SCHEMA_PATH", "PROVIDER_PATHS", "PUBLIC_DOCUMENT_PATHS",
+    "REVIEW_EVIDENCE_CLASSES", "REVIEW_SIGNALS", "REVIEW_VERDICTS",
+    "SENSITIVE_ASSIGNMENT_RE", "SENSITIVE_QUERY_KEYS", "SENSITIVE_QUERY_SUFFIXES",
+    "SKILL_GROUPS", "SPEC_STATES", "annotations", "ast", "declared_string_tokens",
+    "directory_names", "duplicate_values", "hashlib", "json", "load_catalog",
+    "markdown_section", "module_cycle_errors", "parse_frontmatter",
+    "parse_project_json", "parse_template_frontmatter", "re", "read_template",
+    "string_list", "sys", "transitive_module_dependencies",
+    "validate_agents_bootstrap", "validate_approval_policy", "validate_catalog",
+    "validate_compliance_event", "validate_compliance_module",
+    "validate_directory_set", "validate_enforcement_module",
+    "validate_evidence_document", "validate_evidence_module",
+    "validate_markdown_links", "validate_multi_repo_module",
+    "validate_optional_compliance_module", "validate_optional_enforcement_module",
+    "validate_optional_evidence_module", "validate_optional_multi_repo_module",
+    "validate_project_config", "validate_provider_neutrality",
+    "validate_public_documentation", "validate_review_template",
+    "validate_skill", "validate_templates", "validate_v1_source_coverage",
+)
 
-def parse_frontmatter(text: str, path: Path) -> dict[str, str]:
-    lines = text.splitlines()
-    if not lines or lines[0] != "---":
-        raise ValueError(f"{path}: missing opening YAML frontmatter")
-    try:
-        end = lines.index("---", 1)
-    except ValueError as exc:
-        raise ValueError(f"{path}: missing closing YAML frontmatter") from exc
+_MODULES = (artifacts, distribution, documentation, semantics)
+for _name in _EXPORTS:
+    for _module in _MODULES:
+        if hasattr(_module, _name):
+            globals()[_name] = getattr(_module, _name)
+            break
+    else:
+        raise AttributeError(
+            f"validation responsibility does not export {_name}")
 
-    metadata: dict[str, str] = {}
-    for line in lines[1:end]:
-        if not line.strip():
-            continue
-        if ":" not in line:
-            raise ValueError(f"{path}: invalid frontmatter line: {line}")
-        key, value = line.split(":", 1)
-        metadata[key.strip()] = value.strip()
-    return metadata
-
-
-def validate_skill(skill_dir: Path) -> list[str]:
-    errors: list[str] = []
-    skill_file = skill_dir / "SKILL.md"
-    if not skill_file.is_file():
-        return [f"{skill_dir}: missing SKILL.md"]
-
-    text = skill_file.read_text(encoding="utf-8")
-    lines = text.splitlines()
-    try:
-        metadata = parse_frontmatter(text, skill_file)
-    except ValueError as exc:
-        return [str(exc)]
-
-    name = metadata.get("name", "")
-    description = metadata.get("description", "")
-    if name != skill_dir.name:
-        errors.append(f"{skill_file}: name must match directory ({skill_dir.name})")
-    if not NAME_RE.fullmatch(name):
-        errors.append(f"{skill_file}: invalid skill name {name!r}")
-    if not description:
-        errors.append(f"{skill_file}: description is required")
-    elif "Use when" not in description:
-        errors.append(f"{skill_file}: description must state 'Use when'")
-    if len(lines) > 500:
-        errors.append(f"{skill_file}: exceeds 500-line hard limit")
-    elif len(lines) > 200:
-        errors.append(f"{skill_file}: exceeds 200-line project target")
-
-    for relative in LINK_RE.findall(text):
-        target = (skill_dir / relative).resolve()
-        try:
-            target.relative_to(skill_dir.resolve())
-        except ValueError:
-            errors.append(f"{skill_file}: reference leaves skill root: {relative}")
-            continue
-        if not target.exists():
-            errors.append(f"{skill_file}: missing local reference: {relative}")
-
-    for provider_path in PROVIDER_PATHS:
-        if provider_path in text:
-            errors.append(
-                f"{skill_file}: provider-specific path in portable instructions: "
-                f"{provider_path}"
-            )
-    return errors
+# CLI-compatible wrappers remain the only validator-facing bodies here.
 
 
-def main() -> int:
-    errors: list[str] = []
-    if not (ROOT / "AGENTS.md").is_file():
-        errors.append("Missing AGENTS.md")
+def validate_repository(root: Path = ROOT) -> list[str]:
+    return semantics.validate_repository(root)
 
-    found = {path.name for path in SKILLS_ROOT.iterdir() if path.is_dir()}
-    if found != EXPECTED:
-        errors.append(
-            f"Skill set mismatch: expected {sorted(EXPECTED)}, found {sorted(found)}"
-        )
 
-    for skill_dir in sorted(SKILLS_ROOT.iterdir()):
-        if skill_dir.is_dir():
-            errors.extend(validate_skill(skill_dir))
+def main(root: Path = ROOT) -> int:
+    return semantics.main(root)
 
-    spec_template = (
-        SKILLS_ROOT / "write-spec" / "assets" / "spec.template.md"
-    ).read_text(encoding="utf-8")
-    for required in ("id:", "title:", "status: draft", "depends_on: []"):
-        if required not in spec_template:
-            errors.append(f"Spec template missing metadata field: {required}")
-    index_template = (
-        SKILLS_ROOT / "write-spec" / "assets" / "spec-index.template.md"
-    ).read_text(encoding="utf-8")
-    for state in sorted(SPEC_STATES):
-        if f"`{state}`" not in index_template:
-            errors.append(f"Spec index missing lifecycle state: {state}")
 
-    plan_template = (
-        SKILLS_ROOT / "plan" / "assets" / "plan.template.md"
-    ).read_text(encoding="utf-8")
-    for required in (
-        "id: PLAN-",
-        "sources:",
-        "status: draft",
-        "risk: low",
-        "risk_rationale:",
-        "## Source coverage",
-        "## Verification strategy",
-    ):
-        if required not in plan_template:
-            errors.append(f"Plan template missing field: {required}")
-
-    task_template = (
-        SKILLS_ROOT / "decompose-tasks" / "assets" / "tasks.template.md"
-    ).read_text(encoding="utf-8")
-    for required in (
-        "Plan:",
-        "Source items:",
-        "Type:",
-        "Risk:",
-        "Risk rationale:",
-        "State:",
-        "Depends on:",
-        "Blocker:",
-        "Execution:",
-        "Conflicts with:",
-        "Acceptance evidence:",
-        "Validation commands/procedure:",
-        "Result: pending",
-    ):
-        if required not in task_template:
-            errors.append(f"Task template missing field: {required}")
-
-    if errors:
-        print("Validation failed:")
-        for error in errors:
-            print(f"- {error}")
-        return 1
-
-    print(f"Validation passed: {len(found)} skills")
-    return 0
-
+__all__ = list(_EXPORTS) + ["ROOT", "validate_repository", "main"]
+del _module, _name, _MODULES
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

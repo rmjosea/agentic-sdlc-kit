@@ -11,16 +11,28 @@ risk_rationale: <Why this level applies>
 
 ## Goal and source intent
 
-## Repository findings
+## Repository findings and facts
 
-## Confirmed technical decisions
+## Confirmed constraints
+
+## Assumptions
+
+## Agent inferences
+
+## Unknowns
+
+## Confirmed technical decisions and rationale
+
+| Decision | Material rationale | Source |
+|---|---|---|
 
 ## Design summary
 
-## Source coverage
+## Source coverage and impact map
 
-| Source item | Design response |
-|---|---|
+| Source item | Design response | Affected plan area | State |
+|---|---|---|---|
+| <source item> | <implementation path> | <plan section/decision> | valid |
 
 ## Verification strategy
 

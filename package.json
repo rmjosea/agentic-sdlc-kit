@@ -1,0 +1,37 @@
+{
+  "name": "agentic-sdlc-kit",
+  "version": "2.1.0",
+  "description": "A lightweight, evidence-driven development harness for coding agents.",
+  "main": "bin/cli.js",
+  "bin": {
+    "agentic-sdlc-kit": "./bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    ".agents/",
+    "AGENTS.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "validate": "python3 scripts/validate.py",
+    "test": "python3 -m unittest discover -s tests -p 'test_*.py'"
+  },
+  "keywords": [
+    "agents",
+    "agentic",
+    "sdlc",
+    "coding-agent",
+    "skills",
+    "spec-driven",
+    "claude-code",
+    "cursor",
+    "codex"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

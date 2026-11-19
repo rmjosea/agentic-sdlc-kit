@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentic-sdlc-kit:plan:v2",
+  "allOf": [
+    {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2"},
+    {
+      "type": "object",
+      "required": ["metadata", "h1", "sections", "local_ids", "references", "placeholders"],
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schema_version", "id", "type", "sources", "source_revisions", "status", "risk", "risk_rationale"],
+          "properties": {
+            "schema_version": {"const": 2},
+            "id": {
+              "anyOf": [
+                {"type": "string", "pattern": "^PLAN-[0-9]+$"},
+                {"const": "PLAN-<NNN>"}
+              ]
+            },
+            "type": {"const": "plan"},
+            "sources": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2#/$defs/artifact_id"}
+            },
+            "source_revisions": {
+              "type": "object",
+              "additionalProperties": {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2#/$defs/source_revision"}
+            },
+            "status": {"enum": ["draft", "approved", "stale", "implemented"]},
+            "risk": {"enum": ["low", "medium", "high"]},
+            "risk_rationale": {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2#/$defs/non_empty_string"},
+            "children": {
+              "type": "array",
+              "items": {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2#/$defs/fragment_child"}
+            }
+          }
+        },
+        "h1": {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2#/$defs/non_empty_string"},
+        "sections": {"const": ["Goal and source intent", "Repository findings and facts", "Confirmed constraints", "Assumptions", "Agent inferences", "Unknowns", "Confirmed technical decisions and rationale", "Design summary", "Native interface contracts", "Source coverage and impact map", "Verification strategy", "Risks and mitigations", "Open questions"]},
+        "local_ids": {"type": "array", "maxItems": 0},
+        "references": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {"type": "string", "pattern": "^[A-Z]+-[0-9]+(?:-[A-Z]+-[0-9]+)?#REQ-[0-9]+$"},
+              {"type": "string", "pattern": "^[A-Z]+-[0-9]+(?:-[A-Z]+-[0-9]+)?#AC-[0-9]+$"},
+              {"type": "string", "pattern": "^[A-Z]+-[0-9]+(?:-[A-Z]+-[0-9]+)?#TASK-[0-9]+$"}
+            ]
+          }
+        },
+        "placeholders": {"type": "array"}
+      }
+    }
+  ]
+}

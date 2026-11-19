@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "event_id": "EXAMPLE-CHANGE-000001",
+  "sequence": 1,
+  "timestamp": "2025-01-01T00:00:00Z",
+  "change_id": "EXAMPLE-CHANGE",
+  "actor": {
+    "actor_id": "declared-actor",
+    "role": "implementer"
+  },
+  "action": "evidence-updated",
+  "previous_lifecycle": null,
+  "new_lifecycle": null,
+  "authoritative_source_references": [
+    "reference-to-authoritative-source"
+  ],
+  "evidence_references": [
+    "evidence.json",
+    "review.md"
+  ],
+  "approvals": [],
+  "repositories": [
+    {
+      "repository_id": "current",
+      "revision": "0000000000000000000000000000000000000000"
+    }
+  ]
+}

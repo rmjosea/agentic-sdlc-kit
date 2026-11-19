@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "change_id": "EXAMPLE-CHANGE",
+  "authoritative_sources": [
+    {
+      "id": "accepted-request",
+      "reference": "reference-to-authoritative-source"
+    }
+  ],
+  "lifecycle": {
+    "status": "in-progress",
+    "transition": "not-requested",
+    "evidence_references": [
+      "reference-to-accepted-scope"
+    ]
+  },
+  "risk": {
+    "level": "low",
+    "rationale": "Replace with the scoped risk rationale."
+  },
+  "change_contract": {
+    "intent": "Replace with the accepted intent.",
+    "confirmed_why": "reference-to-confirmed-rationale",
+    "scope": "Replace with concise included and excluded scope.",
+    "expected_evidence": [
+      "Replace with expected evidence."
+    ],
+    "agent_roles": [
+      "implementer",
+      "self-reviewer"
+    ],
+    "review_focus": [
+      "Replace with the primary review focus."
+    ]
+  },
+  "repository_scope": [
+    {
+      "repository_id": "current",
+      "base": null,
+      "head": null,
+      "committed_range": null,
+      "uncommitted_entries": [],
+      "snapshot_sha256": null
+    }
+  ],
+  "requirement_coverage": [
+    {
+      "requirement_id": "accepted-request",
+      "repository_ids": [
+        "current"
+      ],
+      "status": "partial",
+      "implementation_references": [],
+      "evidence_references": []
+    }
+  ],
+  "checks": [
+    {
+      "id": "scoped-check",
+      "requirement_ids": [
+        "accepted-request"
+      ],
+      "repository_ids": [
+        "current"
+      ],
+      "kind": "scoped",
+      "required": true,
+      "applicability": "applicable",
+      "not_applicable_reason": null,
+      "status": "not-run",
+      "observed_result": null,
+      "evidence_class": null,
+      "output_reference": null
+    }
+  ],
+  "review": {
+    "reviewer_role": null,
+    "reviewer_id": null,
+    "implementers": [
+      "declared-implementer"
+    ],
+    "prior_participation": [],
+    "fresh_context": false,
+    "independence": "not-reviewed",
+    "independence_basis": null,
+    "verdict": "not-reviewed",
+    "reference": "review.md"
+  },
+  "known_limits": "not-tracked",
+  "remaining_risks": [],
+  "follow_ups": []
+}

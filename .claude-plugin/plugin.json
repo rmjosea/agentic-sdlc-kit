@@ -1,0 +1,16 @@
+{
+  "name": "agentic-sdlc-kit",
+  "version": "2.1.0",
+  "description": "A lightweight, evidence-driven development harness for coding agents.",
+  "author": {
+    "name": "Agentic SDLC Kit"
+  },
+  "keywords": [
+    "engineering",
+    "sdlc",
+    "skills",
+    "spec-driven",
+    "tdd",
+    "code-review"
+  ]
+}

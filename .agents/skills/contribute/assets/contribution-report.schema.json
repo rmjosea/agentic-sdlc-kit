@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentic-sdlc-kit:contribution-report:v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "valid",
+    "errors",
+    "warnings",
+    "advice",
+    "policy_sources",
+    "policy",
+    "scope",
+    "branch",
+    "commit",
+    "pull_request",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": {"const": 2},
+    "valid": {"type": "boolean"},
+    "errors": {"$ref": "#/$defs/issues"},
+    "warnings": {"$ref": "#/$defs/issues"},
+    "advice": {"$ref": "#/$defs/issues"},
+    "policy_sources": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {"$ref": "#/$defs/policy_source"}
+    },
+    "policy": {"$ref": "#/$defs/policy"},
+    "scope": {"$ref": "#/$defs/scope"},
+    "branch": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "created", "switched"],
+          "properties": {
+            "name": {"$ref": "#/$defs/string"},
+            "created": {"const": false},
+            "switched": {"const": false}
+          }
+        }
+      ]
+    },
+    "commit": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "subject_length", "body_present", "trailers"],
+          "properties": {
+            "mode": {"enum": ["classic", "conventional"]},
+            "subject_length": {"type": "integer", "minimum": 0, "maximum": 65536},
+            "body_present": {"type": "boolean"},
+            "trailers": {"$ref": "#/$defs/strings"}
+          }
+        }
+      ]
+    },
+    "pull_request": {"$ref": "#/$defs/pull_request"},
+    "summary": {"enum": ["validation passed", "validation failed"]}
+  },
+  "$defs": {
+    "string": {"type": "string", "minLength": 1, "maxLength": 2000},
+    "nullable_string": {"oneOf": [{"$ref": "#/$defs/string"}, {"type": "null"}]},
+    "strings": {
+      "type": "array",
+      "maxItems": 1000,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/string"}
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "path", "field", "message"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "path": {"$ref": "#/$defs/nullable_string"},
+        "field": {"$ref": "#/$defs/nullable_string"},
+        "message": {"$ref": "#/$defs/string"}
+      }
+    },
+    "issues": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {"$ref": "#/$defs/issue"}
+    },
+    "policy_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "path", "kind", "finding", "state", "relevant_lines", "relevant_terms"],
+      "properties": {
+        "level": {"type": "integer", "minimum": 1, "maximum": 5},
+        "path": {"$ref": "#/$defs/string"},
+        "kind": {"$ref": "#/$defs/string"},
+        "finding": {"$ref": "#/$defs/string"},
+        "state": {"enum": ["observed", "resolved", "confirmation-required"]},
+        "relevant_lines": {
+          "type": "array",
+          "maxItems": 200,
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 1}
+        },
+        "relevant_terms": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"enum": ["branch", "commit"]}
+        }
+      }
+    },
+    "pull_request": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["title", "sections", "template", "merge_strategy", "observed_checks", "omitted_checks"],
+          "properties": {
+            "title": {"$ref": "#/$defs/nullable_string"},
+            "sections": {"$ref": "#/$defs/strings"},
+            "template": {"$ref": "#/$defs/nullable_string"},
+            "merge_strategy": {"enum": ["unknown", "merge", "squash", "rebase"]},
+            "observed_checks": {"$ref": "#/$defs/strings"},
+            "omitted_checks": {"$ref": "#/$defs/strings"}
+          }
+        }
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit_mode", "commit_mode_source", "commit_mode_state", "branch_prefixes", "branch_prefix_state", "required_trailers", "confirmed"],
+      "properties": {
+        "commit_mode": {"enum": ["classic", "conventional"]},
+        "commit_mode_source": {"$ref": "#/$defs/string"},
+        "commit_mode_state": {"enum": ["resolved", "confirmation-required"]},
+        "branch_prefixes": {"$ref": "#/$defs/strings"},
+        "branch_prefix_state": {"enum": ["resolved", "confirmation-required"]},
+        "required_trailers": {"$ref": "#/$defs/strings"},
+        "confirmed": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["policy_source", "commit_mode", "branch_prefix"],
+          "properties": {
+            "policy_source": {"$ref": "#/$defs/nullable_string"},
+            "commit_mode": {
+              "oneOf": [
+                {"enum": ["classic", "conventional"]},
+                {"type": "null"}
+              ]
+            },
+            "branch_prefix": {"$ref": "#/$defs/nullable_string"}
+          }
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_ref", "expected_paths", "staged", "unstaged", "untracked", "unexpected_staged"],
+      "properties": {
+        "base_ref": {"$ref": "#/$defs/nullable_string"},
+        "expected_paths": {"$ref": "#/$defs/strings"},
+        "staged": {"$ref": "#/$defs/strings"},
+        "unstaged": {"$ref": "#/$defs/strings"},
+        "untracked": {"$ref": "#/$defs/strings"},
+        "unexpected_staged": {"$ref": "#/$defs/strings"}
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 2,
+  "event_id": "EVENT-000001",
+  "sequence": 1,
+  "timestamp": "2025-01-01T00:00:00Z",
+  "change_id": "TASK-208",
+  "actor": {"actor_id": "declared-actor", "role": "implementer"},
+  "action": "change-started",
+  "previous_lifecycle": null,
+  "new_lifecycle": null,
+  "authoritative_source_references": ["SPEC-002"],
+  "evidence_references": ["EVIDENCE-901", "review.md"],
+  "approvals": [],
+  "repositories": [
+    {"repository_id": "current", "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+  ]
+}

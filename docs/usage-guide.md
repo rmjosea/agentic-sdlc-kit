@@ -11,7 +11,10 @@ compatible coding agent, including Codex, Claude Code, Cursor, GitHub Copilot,
 or another tool that can read repository instructions and Agent Skills.
 
 The kit is a decision and verification harness. It does not replace your coding
-agent, programming language, test framework, issue tracker, or CI system.
+agent, programming language, test framework, issue tracker, or CI system. This
+`docs/usage-guide.md` path exists only in the kit source checkout; an installed
+target uses its `AGENTS.md` bootstrap and installed `SKILL.md`/`MODULE.md`
+contracts instead.
 
 > [!NOTE]
 > You do not need to memorize the workflow. Start every change by asking the
@@ -28,7 +31,9 @@ agent, programming language, test framework, issue tracker, or CI system.
 | Coordinate tasks | [Task states](#10-task-states-and-execution) |
 | Run agents in parallel | [Parallel work](#11-parallel-work) |
 | Resume safely | [Handoff](#12-handoff-and-recovery) |
-| Copy a prompt | [Prompt cheat sheet](#16-prompt-cheat-sheet) |
+| Validate source or an install | [Validation commands](#15-validation-commands) |
+| Copy a prompt | [Prompt cheat sheet](#17-prompt-cheat-sheet) |
+| Compare kit outcomes | [Baseline evaluation](#18-baseline-evaluation-protocol) |
 
 ## 1. The operating model
 
@@ -65,36 +70,269 @@ The governing rule is:
 > Use the least durable process that safely preserves intent, evidence, and
 > recoverability.
 
+Keep provenance explicit throughout every route: accepted human/source input is
+authoritative; confirmed rationale and constraints remain sourced; observed code
+is repository evidence, not authority for why; assumptions and agent inferences
+stay labeled; unresolved material facts remain unknown. Trace the artifacts that
+actually exist (`intent/spec -> plan when needed -> tasks when needed -> diff ->
+checks/review`) without manufacturing missing gates.
+
 ## 2. Install the kit
 
-Clone Agentic SDLC Kit and run the installer from the kit directory:
+Clone this kit and run its installer from the kit directory. Target safety is
+part of the canonical installation contract:
+
+<!-- contract:installer-target-safety:start -->
+| Rule | Requirement |
+| --- | --- |
+| target | existing local Git repository root |
+| symlinks | target and every inspected ancestor must not be a symlink |
+| macOS | use canonical `/private/...` for locations exposed through `/var`, `/tmp`, or another symlinked system path |
+<!-- contract:installer-target-safety:end -->
+
+### Catalog and profiles
+
+The catalog is the source of truth. The source kit release is `2.1.0`. It has
+twenty available skills and four modules. The default profile installs thirteen skills
+and no modules; full installs all twenty skills and all four modules.
+These canonical tables are checked against `.agents/kit-catalog.json`.
+
+<!-- contract:catalog-groups:start -->
+| Group | Members |
+| --- | --- |
+| core | `drill-docs`, `save-output`, `judge-spec`, `plan-feature`, `breakdown-tasks`, `implement`, `close-spec` |
+| utilities | `git-conventions`, `create-skill`, `agents-creator`, `setup`, `ask-kit`, `contribute` |
+| optional | `estimate-effort`, `domain-model`, `review`, `shape-idea`, `write-spec`, `plan`, `decompose-tasks` |
+| modules | `evidence`, `enforcement`, `multi-repo`, `compliance` |
+<!-- contract:catalog-groups:end -->
+
+<!-- contract:profiles:start -->
+| Profile | Skills | Modules |
+| --- | --- | --- |
+| default | `drill-docs`, `save-output`, `judge-spec`, `plan-feature`, `breakdown-tasks`, `implement`, `close-spec`, `git-conventions`, `create-skill`, `agents-creator`, `setup`, `ask-kit`, `contribute` | none |
+| full | `drill-docs`, `save-output`, `judge-spec`, `plan-feature`, `breakdown-tasks`, `implement`, `close-spec`, `git-conventions`, `create-skill`, `agents-creator`, `setup`, `ask-kit`, `contribute`, `estimate-effort`, `domain-model`, `review`, `shape-idea`, `write-spec`, `plan`, `decompose-tasks` | `evidence`, `enforcement`, `multi-repo`, `compliance` |
+<!-- contract:profiles:end -->
+
+<!-- contract:module-dependencies:start -->
+| Module | Depends on |
+| --- | --- |
+| evidence | none |
+| enforcement | none |
+| multi-repo | none |
+| compliance | `evidence`, `enforcement` |
+<!-- contract:module-dependencies:end -->
+
+Selecting `compliance` directly therefore installs `evidence` and `enforcement`,
+not `multi-repo`. Installation enables a module only when the explicit
+`--init-config` flag creates an absent `.agents/project.json` (see below).
+
+### Selection and dry runs
 
 ```bash
-python3 scripts/install.py /path/to/your/repository --dry-run
-python3 scripts/install.py /path/to/your/repository
+# Preview or install the noninteractive default profile
+python3 scripts/install.py /path/to/repository --profile default --dry-run
+python3 scripts/install.py /path/to/repository --profile default
+
+# Add one or several components to a profile
+python3 scripts/install.py /path/to/repository --with domain-model
+python3 scripts/install.py /path/to/repository --with evidence --with enforcement
+python3 scripts/install.py /path/to/repository --with multi-repo,compliance
+
+# Install every catalog component, including compliance dependencies
+python3 scripts/install.py /path/to/repository --profile full
 ```
 
-The target must be the root of an existing Git repository.
+With a TTY and neither `--profile` nor `--with`, the installer starts from the
+default profile and displays an extras menu. Choose extras by exact name or
+number, comma-separated; a blank response chooses none. With noninteractive
+input, the same command selects `default` without prompting. Supplying either
+`--profile` or `--with` also makes selection explicit and skips the menu.
+`--dry-run` performs selection, preflight, conflict handling, and reporting but
+writes nothing.
 
-The installer adds:
+### Optional initial configuration
 
-```text
-your-repository/
-├── AGENTS.md
-└── .agents/
-    └── skills/
-        ├── shape-idea/
-        ├── write-spec/
-        ├── plan/
-        ├── decompose-tasks/
-        ├── implement/
-        ├── review/
-        └── create-skill/
+Add `--init-config` to any install command to create `.agents/project.json`
+when it does not exist yet. The flag is the explicit approval for one
+conservative file:
+
+- it starts from the setup template defaults;
+- it records only observed facts: the branch `origin/HEAD` points to, an
+  existing local pull-request template, and the selected modules whose
+  dependencies are also selected (`multi-repo` stays disabled because it needs
+  a confirmed repository map; an enabled `evidence` module gets the `evidence`
+  root);
+- commit convention, tracker, approval rules, and other roots stay neutral,
+  because history and remotes are not policy evidence;
+- an existing `.agents/project.json` (or symlink) is never changed, and a legacy
+  `.agents/project.md` skips creation;
+- with `--dry-run` it prints the exact file instead of writing it.
+
+The created file is project-owned and is never recorded in the ownership
+manifest. Use the `setup` skill to review or refine it.
+
+### Ownership, updates, and conflicts
+
+A successful run can copy, update, adopt, leave unchanged, or keep a selected
+component; it does not necessarily write every selection. Among selected
+components, only kit-managed outcomes are recorded and hashed; prior unselected
+managed components remain recorded. The canonical catalog is always managed and
+hashed after success. `AGENTS.md` is managed and hashed only when the
+kit installed it or is updating an intact prior kit-owned copy. The generated
+`.agents/agentic-sdlc-kit.json` is the ownership manifest; unselected previously
+managed components are retained rather than removed. `.agents/project.json` is
+user-owned and is never replaced or recorded in the manifest; only explicit
+`--init-config` may create it when absent.
+
+<!-- contract:installer-ownership:start -->
+| Outcome | Filesystem | Ownership manifest |
+| --- | --- | --- |
+| copy | selected source is written | managed and hashed |
+| update | intact managed selection is updated | managed and hashed |
+| adopt | identical selected content is not rewritten | managed and hashed |
+| unchanged | intact selected content is not rewritten | existing managed hash retained |
+| keep | no write; conflicting component remains project-owned | unmanifested |
+| manual-merge | no write; existing AGENTS.md is preserved | AGENTS.md excluded |
+<!-- contract:installer-ownership:end -->
+
+For a component or catalog conflict, an interactive run asks `keep`, `replace`,
+or `abort`; a noninteractive run without a policy aborts before applying
+changes. `--on-conflict replace` replaces conflicting selected components.
+`--force-skills` is its compatibility alias and cannot be combined with
+`--on-conflict keep`.
+
+The canonical catalog cannot be kept when it conflicts, so that selection
+aborts. `AGENTS.md` is the exception to replace handling: every existing
+unmanaged or locally modified copy is preserved for manual semantic merge, even
+when replacement was selected. Merge kit principles with repository-specific
+commands and conventions; do not blindly replace either contract.
+
+### Exit codes and local recovery boundary
+
+<!-- contract:installer-exit-codes:start -->
+| Code | Meaning |
+| --- | --- |
+| `0` | success, already current, or dry run |
+| `1` | conflict, abort, handled installation failure, or manual recovery required |
+| `2` | invalid arguments or preflight input |
+| `3` | applied; AGENTS.md semantic merge required |
+| `130` | keyboard interrupt or cancellation |
+<!-- contract:installer-exit-codes:end -->
+
+Run only one installer process at a time for a target. Transactions, staging,
+backups, and recovery metadata are local to that target; there is no
+cross-process lock or distributed recovery. A handled publication failure or
+interrupt attempts rollback. Recovery metadata is best effort, not a durable
+crash journal, so abrupt process/host loss cannot be guaranteed recoverable. If
+rollback is incomplete, or a marked abandoned transaction exists, the installer
+stops and reports the retained target-local directory and `recovery.json` state
+for manual reconciliation. Do not delete retained backups until target content
+has been inspected and restored or accepted.
+
+### Project configuration schema
+
+`.agents/project.json` is the optional project-owned schema-version-2 authority.
+It is strict UTF-8 JSON validated by the setup-owned
+`project.schema.json`: every object is closed, duplicate keys and unknown fields
+are rejected, and all strings are bounded, single-line, control-free, and
+non-sensitive. Legacy `.agents/project.md` is unsupported; the installer, setup,
+checker, and artifact consumers reject it before any write and never parse or
+convert it.
+
+The JSON retains closed nested roots, repositories, enabled modules, tracker,
+agent/review modes, approval policy, and contribution policy. Configured roots
+are safe repository-relative paths; `specs` and `work` are required, while
+`adrs`, `evidence`, and `domain_context` may be `null`. Recognized
+`write-spec` uses `roots.specs`; `plan`, `decompose-tasks`, and `implement` use
+`roots.work`. Invalid config stops rather than triggering a guessed fallback.
+When both config paths are absent, `specs/` and `.work/` remain the core
+fallbacks and optional modules remain inactive.
+
+Repository checkout paths are `.`, a safe path inside the root, or exactly
+`${UPPER_ENV}/relative/path`. The leading variable must resolve to an absolute
+workspace directory; inspectors reject missing values, `..`, backslashes,
+missing/non-Git directories, and every symlink from the anchor through target.
+Contribution values are declarative and cannot configure commands, hooks,
+plugins, or arbitrary regex. Store placeholders, never expansions, and never
+store credentials, authenticated URL userinfo, sensitive query values, or raw
+command output. See the canonical
+[project configuration contract](../.agents/skills/setup/references/project-config.md).
+
+### Contribution checker
+
+The default `contribute` utility owns an offline, read-only checker for policy,
+branch names, commit messages, and provider-neutral pull-request drafts:
+
+```bash
+python3 .agents/skills/contribute/scripts/check_contribution.py inspect --root . --format human
+python3 .agents/skills/contribute/scripts/check_contribution.py branch --root . --name work/describe-change --confirmed-branch-prefix work/ --policy-source CONTRIBUTING.md --format json
+printf '%s\n' 'Add bounded checks' | python3 .agents/skills/contribute/scripts/check_contribution.py commit --root . --message-file - --confirmed-commit-mode classic --policy-source CONTRIBUTING.md --format human
+python3 .agents/skills/contribute/scripts/check_contribution.py pull-request --root . --draft-file .work/feature/pull-request.md --observations .work/feature/observations.json --format human
 ```
 
-If your repository already has `AGENTS.md`, the installer preserves it and asks
-for a manual semantic merge. Do not blindly replace repository-specific
-commands or conventions.
+Inputs are an existing safe local Git root, optional repeated repository-relative
+expected paths and local base ref, a candidate branch, one bounded strict-UTF-8
+message, or one bounded Markdown draft plus optional observations from safe
+repository files or stdin. Machine `project.json` and clearly structured
+executable commitlint can decide policy directly. Free-form
+`AGENTS*.md`/`CONTRIBUTING*` prose is reported through redacted bounded line
+numbers with state `confirmation-required`; the agent reads and confirms it, then
+passes the value and source flags as a pair. The checker records that confirmation
+but does not interpret prose. Without relevant prose or structured policy, commit
+mode falls back to classic and branch policy has no prefix. Human and JSON outputs
+report the same policy, confirmation, scope, errors, warnings, and advice. Exit
+`0` is valid, `1` is a policy/validation failure, and `2` is unsafe input or
+invocation.
+
+The checker uses only bounded allowlisted read-only Git commands. It runs no
+hook, linter, CI command, staging, commit, branch change, shell, network, or
+provider operation and writes no file. Git prompts, optional locks, lazy fetch,
+external diff behavior, configured filesystem monitors, and interactive
+credentials are disabled. The owning
+[`SKILL.md`](../.agents/skills/contribute/SKILL.md) defines activation and
+[`references/commits.md`](../.agents/skills/contribute/references/commits.md)
+loads only for commit preparation; [`references/pull-requests.md`](../.agents/skills/contribute/references/pull-requests.md)
+loads only for pull-request draft preparation. [`references/review-responses.md`](../.agents/skills/contribute/references/review-responses.md)
+loads only for author-response preparation. Draft validation reports required
+sections, local-template placeholders, merge-policy title rules, and observed or
+omitted checks. It never persists a draft, invokes a hook, or performs an
+external action; persistence is caller-selected under the configured work root
+or `.work/`. Inputs, outputs, side effects, environment assumptions, failure
+modes, and exits are otherwise the same bounded offline contract above.
+
+### Optional module boundary
+
+A module applies only when its `MODULE.md` is installed **and** its name is
+listed in `enabled_modules` in a recognized project configuration; required
+configuration must also be present. Otherwise core behavior is unchanged.
+
+- `evidence` lazily uses `<roots.evidence>/<change-id>/evidence.json` with a
+  linked colocated `review.md`, both governed by evidence schema version 1. It
+  records fixed repository scope, requirement/check coverage, risk completeness,
+  review classification, and known limits. Machine strings are single-line and
+  at most 500 characters; records contain concise results/references, not raw
+  output, secrets, credentials, personal data, or authenticated identity claims.
+- `enforcement` supplies the standalone deterministic read-only checker described
+  in [Validation commands](#15-validation-commands).
+- `multi-repo` coordinates configured existing local Git checkouts only. It does
+  not discover or create them and never clones, checks out, resets, cleans,
+  creates/deletes worktrees, fetches, pulls, pushes, obtains credentials, or
+  accesses the network. Enforcement inspects paths and `.git` markers without
+  executing Git.
+- `compliance` applies only with evidence and enforcement installed and enabled
+  and an evidence root configured. Its `audit.jsonl` is colocated with evidence;
+  events, actors, revisions, and approvals are declared, editable,
+  repository-versioned Git provenance. Its guarantee boundary is canonical:
+
+<!-- contract:compliance-limitations:start -->
+| Capability | Status |
+| --- | --- |
+| cryptographic chain or signature | not provided |
+| authenticated identity | not provided |
+| legal certification | not provided |
+| compliance guarantee | not provided |
+| external publication | not provided |
+<!-- contract:compliance-limitations:end -->
 
 ## 3. Prepare the coding agent
 
@@ -107,7 +345,11 @@ Before starting work, ensure the coding agent can:
 
 Skill discovery locations differ between products. The canonical skill source
 remains `.agents/skills/`; configure your tool to use that location if it does
-not discover it automatically.
+not discover it automatically. `AGENTS.md` is the small navigation-by-intent
+bootstrap: the workflow diagram is a delivery chain rather than a full
+inventory, and agents load catalog, candidate metadata, configuration, manifest,
+or module detail only until the request is addressable. No `.agents/README.md`
+or global loading-recipes file is required.
 
 Start a new session with:
 
@@ -159,10 +401,11 @@ accepted intent -> diff -> checks
 Use a spec when the **what** needs to remain durable, but the **how** is
 repository-standard and requires no material technical decision.
 
-Artifacts:
+Artifacts (`<specs-root>` is recognized `roots.specs`, or the `specs/`
+fallback when configuration is absent):
 
 ```text
-specs/<NNN-capability>/spec.md
+<specs-root>/<NNN-capability>/spec.md
 ```
 
 Evidence chain:
@@ -177,10 +420,11 @@ Use a plan without manufacturing a spec when accepted intent already exists in
 an issue, contract, reproduced behavior, or confirmed request, but the
 technical approach needs durable decisions.
 
-Artifacts:
+Artifacts (`<work-root>` is recognized `roots.work`, or the `.work/` fallback
+when configuration is absent):
 
 ```text
-.work/<feature>/plan.md
+<work-root>/<feature>/plan.md
 ```
 
 Evidence chain:
@@ -194,13 +438,13 @@ accepted intent -> plan -> diff -> review evidence
 Use the full path for new or ambiguous product behavior with non-obvious
 technical design and multiple executable tasks.
 
-Artifacts:
+Artifacts use the same resolved roots described above:
 
 ```text
-specs/<NNN-capability>/spec.md
-.work/<feature>/plan.md
-.work/<feature>/tasks.md
-.work/<feature>/handoff.md   # only when recovery or continuation is needed
+<specs-root>/<NNN-capability>/spec.md
+<work-root>/<feature>/plan.md
+<work-root>/<feature>/tasks.md
+<work-root>/<feature>/handoff.md   # only when recovery or continuation is needed
 ```
 
 Evidence chain:
@@ -316,7 +560,7 @@ design. Decide whether this is one cohesive capability or requires multiple
 specs, and ask before splitting if the boundary affects delivery.
 ```
 
-Expected artifact:
+Assuming `.agents/project.json` is absent, the expected fallback artifact is:
 
 ```text
 specs/012-notification-muting/spec.md
@@ -350,10 +594,13 @@ approved -> implemented
 ### Step 3: review
 
 ```text
-Use review against the fixed comparison base and
-specs/012-notification-muting/spec.md. Review the actual committed and
-uncommitted diff, execute relevant checks, map each requirement to evidence,
-and return approved, changes-required, or blocked. Do not modify files.
+Use review against a fixed base and head and
+specs/012-notification-muting/spec.md. Include the actual committed and
+uncommitted scope, record reviewer/implementer roles and independence, consume
+any change contract and review focus, and select quality signals by risk with
+concise N/A reasons. Execute relevant checks, classify evidence as observed,
+source-based inference, or unverified claim, map each requirement to evidence,
+and return exactly approved, changes-required, or blocked. Do not modify files.
 ```
 
 After an approving evidence-based review:
@@ -383,7 +630,7 @@ at a time with alternatives and a recommendation. Write an approved plan only
 after I confirm the complete direction.
 ```
 
-Expected artifact:
+Assuming `.agents/project.json` is absent, the expected fallback artifact is:
 
 ```text
 .work/v2-payload-compatibility/plan.md
@@ -468,7 +715,8 @@ accepted and released independently. Split by product capability, never by
 frontend, backend, API, or database.
 ```
 
-Possible result:
+This example assumes configuration is absent and therefore uses the conventional
+fallback roots. Possible result:
 
 ```text
 specs/
@@ -526,6 +774,19 @@ flowchart LR
     class T5 proof;
 ```
 
+Before task entries, the graph records one planned-execution topology and its
+backpressure controls:
+
+```markdown
+## Execution controls
+
+- Topology: implementer-plus-fresh-validator
+- Topology decision: approved project preference
+- Review/integration capacity: one task at a time
+- Maximum in-progress: 1
+- Review queue: empty
+```
+
 Example task:
 
 ```markdown
@@ -540,8 +801,20 @@ Example task:
 - Depends on: TASK-001
 - Blocker: TASK-001
 - Execution: exclusive
+- Execution rationale: Membership policy is a shared mutable surface.
 - Change surface: invitation service, membership policy, integration tests
 - Conflicts with: none
+
+#### Change contract
+
+- What: Accept a valid invitation exactly once.
+- Why: PLAN-021 authorization and token-lifecycle decision.
+- Scope: Acceptance path and membership policy; invitation sending excluded.
+- Evidence: Integration coverage for success, replay, expiry, and authorization.
+- Contract risk: High; an external token assigns workspace authorization.
+- Agent roles: Read-only exploration; assigned implementer; fresh validator.
+- Review focus: Authorization, replay prevention, and role assignment.
+
 - Acceptance evidence: A valid unexpired invitation creates exactly one
   membership with the invited role.
 - Validation commands/procedure: Run the invitation acceptance integration
@@ -559,7 +832,10 @@ complete only this task. Persist exact validation results before marking it
 done. Recompute dependent readiness afterward.
 ```
 
-Continue one ready task at a time.
+Continue only while the recorded WIP limit has capacity and the review queue is
+empty. A selected topology may use the primary agent, a fresh implementer per
+task, or an implementer followed by a fresh non-mutating validator. It does not
+change task dependencies or authorize parallel self-claiming.
 
 ### Step 6: review
 
@@ -611,7 +887,20 @@ Rules:
 
 ## 11. Parallel work
 
-`Depends on` defines topology. `Execution` defines concurrency safety.
+`Depends on` defines the task graph. `Execution` defines concurrency safety.
+Before planned work starts, select exactly one agent topology, using an approved
+project preference when present or asking once otherwise:
+
+- **Primary agent:** one context explores, implements assigned work, and
+  self-validates.
+- **Fresh implementer per task:** each externally assigned task receives a fresh
+  implementation context.
+- **Implementer plus fresh validator:** a separate fresh validator checks the
+  fixed contract and diff without mutation, returning failures to implementation.
+
+Exploration is read-only, implementation is limited to the assigned outcome,
+and validation is non-mutating and fresh by default. Use subagents only when the
+independence is useful.
 
 ```mermaid
 flowchart LR
@@ -637,11 +926,18 @@ read the same `ready` task and both claim it. A human or external orchestrator
 must assign parallel work before agents start.
 
 `parallel-safe` means safe to schedule concurrently after assignment. It is not
-permission for autonomous self-claiming.
+permission for autonomous self-claiming. Concurrent tasks also need isolated
+worktrees, branches, or non-overlapping change surfaces and no shared conflict.
+
+WIP must fit human review and integration capacity. When capacity is not
+configured, allow at most one `in-progress` task. Stop starting tasks whenever
+the review queue is non-empty, even when another task is otherwise
+`parallel-safe`. These controls do not create a scheduler, daemon, unattended
+execution, or automatic push or deployment.
 
 ## 12. Handoff and recovery
 
-Create `.work/<feature>/handoff.md` whenever:
+Create `<work-root>/<feature>/handoff.md` whenever:
 
 - work stops unfinished;
 - another session or agent will continue;
@@ -650,13 +946,14 @@ Create `.work/<feature>/handoff.md` whenever:
 
 The handoff records:
 
-- baseline and working-tree state;
-- current task and authoritative state;
-- changes made;
-- exact validation and results;
-- decisions and deviations;
-- risks and blockers;
-- next eligible tasks.
+- baseline, branch or worktree, and relevant working-tree state;
+- the current task and authoritative `tasks.md` state;
+- objective last progress;
+- exact checks and observed results, including failures and unrun checks;
+- agent topology and role assignments;
+- known consumed limits, or `not-tracked` when no budget was measured;
+- stop reason and blockers or required decision;
+- one next safe action.
 
 `tasks.md` remains the source of task state. `handoff.md` is only a recovery
 snapshot.
@@ -665,7 +962,8 @@ Resume with:
 
 ```text
 Read AGENTS.md, the authoritative source artifacts,
-.work/<feature>/tasks.md, and .work/<feature>/handoff.md. Treat tasks.md as
+<work-root>/<feature>/tasks.md, and <work-root>/<feature>/handoff.md. Treat
+`tasks.md` as
 authoritative. Inspect the actual Git state and validation evidence before
 trusting the handoff. Tell me the next eligible task and any discrepancy before
 editing.
@@ -694,9 +992,18 @@ flowchart LR
     class E continue;
 ```
 
-Never treat a discovery as silent permission to expand scope.
+Never treat a discovery or agent inference as silent permission to expand
+scope. Use source-to-plan-to-task coverage to mark only affected downstream plan
+areas and tasks stale; unrelated artifacts remain valid.
 
-## 14. Review evidence
+## 14. Testing and review evidence
+
+Select tests by accepted behavior, risk, and an observable stable seam. Prefer
+small vertical feedback loops and meaningful regression/failure-path checks;
+avoid copied implementation literals, private-helper mock choreography, and
+horizontal test layers that prove no working behavior. Record commands or
+procedures and actual outcomes. A failed, skipped, or unrun required check cannot
+support completion.
 
 Review must distinguish:
 
@@ -718,7 +1025,41 @@ An `approved` verdict also requires:
 - all risk-required evidence;
 - independent review for high-risk work.
 
-## 15. Common mistakes
+## 15. Validation commands
+
+These validators have different scopes:
+
+```bash
+# In the kit source checkout: validate the distribution and documentation
+python3 scripts/validate.py
+
+# In a repository where enforcement was installed: inspect that repository
+python3 .agents/modules/enforcement/check.py --root . --format human
+python3 .agents/modules/enforcement/check.py --root . --format json
+```
+
+The source validator checks the catalog, complete source skill/module trees,
+templates, provider neutrality, and public documentation consistency. It is not
+copied as a target-repository runtime command. The installed enforcement checker
+is self-contained and read-only; it validates the target's present catalog,
+manifest, recognized project configuration, and active-module artifacts. Human
+and JSON modes carry the same deterministic findings.
+
+<!-- contract:enforcement-exit-codes:start -->
+| Code | Meaning |
+| --- | --- |
+| `0` | valid |
+| `1` | consistency failures |
+| `2` | invalid invocation; malformed/unrecognized configuration; invalid/uninspectable/symlink root; safe-inspection failure |
+<!-- contract:enforcement-exit-codes:end -->
+
+Code `2` covers invocation/configuration errors and cases where the checker
+cannot safely inspect the requested root; it does not convert those conditions
+into ordinary consistency findings. The checker never executes recorded checks,
+project commands, Git, repository code, network calls, lifecycle actions, or
+writes.
+
+## 16. Common mistakes
 
 ### Creating a spec for every change
 
@@ -764,7 +1105,7 @@ are insufficient.
 If **what** changes, stop and reconfirm. If **how** changes materially, update
 the plan and invalidate affected tasks.
 
-## 16. Prompt cheat sheet
+## 17. Prompt cheat sheet
 
 | Need | Prompt |
 | --- | --- |
@@ -777,9 +1118,40 @@ the plan and invalidate affected tasks.
 | Planned outcome | `Implement the one bounded artifact-backed outcome.` |
 | Ready task | `Implement TASK-<ID>; record results before done.` |
 | Review | `Review the fixed scope and intent; do not edit.` |
+| Domain language or ADR | `Use domain-model; resolve one term or apply all three ADR gates.` |
 | Resume | `Reconcile tasks, handoff, and Git state before editing.` |
 
-## 17. Definition of done
+## 18. Baseline evaluation protocol
+
+Use this protocol to evaluate the kit without converting anecdote into a
+performance or causal claim.
+
+<!-- contract:baseline-claim-limitations:start -->
+| Claim | Policy |
+| --- | --- |
+| causal effect | prohibited without an appropriately powered design and supporting evidence |
+| universal speed or performance | prohibited without an appropriately powered design and supporting evidence |
+<!-- contract:baseline-claim-limitations:end -->
+
+<!-- contract:baseline-protocol:start -->
+| Element | Requirement |
+| --- | --- |
+| arms | frozen comparable tasks and repository revision; no-kit, pinned prior/base kit, and pinned v1 kit |
+| controls | same model and version, prompts/settings, context, tools, permissions, environment, and time/budget limits |
+| sessions | fresh session for every task and arm; randomized order where practical; no carried discoveries |
+| rubric | acceptance oracle, required checks, pass signals, and regression thresholds declared before runs |
+| scoring | same rubric; blinded and independent where practical; scorer involvement, disagreements, and deviations disclosed |
+| measures | success, false completion, scope creep, human corrections/time, escaped defects, skill/module activation and non-activation, cost, elapsed time, and tool steps |
+| reporting | repeated independent samples; per-run results, raw counts, denominators, and uncertainty; missing measurements explicit |
+| thresholds | project-set for the frozen tasks and risks, not universal numbers |
+<!-- contract:baseline-protocol:end -->
+
+Keep prompts, rubrics, raw run records, exclusions, deviations, and scoring
+notes together so another evaluator can reproduce the comparison. The
+forward-evaluation cases in [`../tests/scenarios.md`](../tests/scenarios.md)
+provide behavior coverage, not benchmark results by themselves.
+
+## 19. Definition of done
 
 Work is complete only when:
 

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentic-sdlc-kit:plan-fragment:v2",
+  "allOf": [
+    {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2"},
+    {
+      "type": "object",
+      "required": ["metadata", "h1", "sections", "local_ids", "references", "placeholders"],
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schema_version", "id", "type", "sources", "parent", "fragment_id"],
+          "properties": {
+            "schema_version": {"const": 2},
+            "id": {
+              "anyOf": [
+                {"type": "string", "pattern": "^PLAN-[0-9]+-FRAG-[0-9]+$"},
+                {"const": "<PLAN-FRAGMENT-ID>"}
+              ]
+            },
+            "type": {"const": "plan-fragment"},
+            "sources": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "anyOf": [
+                  {"type": "string", "pattern": "^PLAN-[0-9]+$"},
+                  {"const": "PLAN-<NNN>"}
+                ]
+              }
+            },
+            "parent": {
+              "anyOf": [
+                {"type": "string", "pattern": "^PLAN-[0-9]+$"},
+                {"const": "PLAN-<NNN>"}
+              ]
+            },
+            "fragment_id": {
+              "anyOf": [
+                {"type": "string", "pattern": "^FRAG-[0-9]+$"},
+                {"const": "<FRAGMENT-ID>"}
+              ]
+            }
+          }
+        },
+        "h1": {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2#/$defs/non_empty_string"},
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "urn:agentic-sdlc-kit:markdown-document:v2#/$defs/non_empty_string"}
+        },
+        "local_ids": {"type": "array", "maxItems": 0},
+        "references": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {"type": "string", "pattern": "^[A-Z]+-[0-9]+(?:-[A-Z]+-[0-9]+)?#REQ-[0-9]+$"},
+              {"type": "string", "pattern": "^[A-Z]+-[0-9]+(?:-[A-Z]+-[0-9]+)?#AC-[0-9]+$"},
+              {"type": "string", "pattern": "^[A-Z]+-[0-9]+(?:-[A-Z]+-[0-9]+)?#TASK-[0-9]+$"}
+            ]
+          }
+        },
+        "placeholders": {"type": "array"}
+      }
+    }
+  ]
+}

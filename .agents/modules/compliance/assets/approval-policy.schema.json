@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentic-sdlc-kit:approval-policy:v1",
+  "title": "Agentic SDLC project approval policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["rules"],
+  "properties": {
+    "rules": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/rule"}
+    }
+  },
+  "$defs": {
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+    },
+    "role_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "minimum"],
+      "properties": {
+        "role": {"$ref": "#/$defs/non_empty_string"},
+        "minimum": {"type": "integer", "minimum": 1, "maximum": 100}
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["risk", "action", "required_roles", "independent"],
+      "properties": {
+        "risk": {"enum": ["low", "medium", "high"]},
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "required_roles": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/role_requirement"}
+        },
+        "independent": {"type": "boolean"}
+      }
+    }
+  }
+}

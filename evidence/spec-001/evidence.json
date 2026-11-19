@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "change_id": "spec-001",
+  "authoritative_sources": [
+    {
+      "id": "SPEC-001",
+      "reference": "specs/001-agentic-sdlc-kit-v1/spec.md"
+    },
+    {
+      "id": "PLAN-001",
+      "reference": ".work/001-agentic-sdlc-kit-v1/plan.md"
+    }
+  ],
+  "lifecycle": {
+    "status": "complete",
+    "transition": "verified",
+    "evidence_references": [
+      "review.md"
+    ]
+  },
+  "risk": {
+    "level": "medium",
+    "rationale": "Installer mutations and acceptance tooling require regression, failure-path and independent review evidence."
+  },
+  "change_contract": {
+    "intent": "Deliver the approved Agentic SDLC Kit v1 capability set.",
+    "confirmed_why": "SPEC-001",
+    "scope": "Repository contract, skills, modules, installer, validators, tests and operating guidance.",
+    "expected_evidence": [
+      "Full automated regression",
+      "Source distribution validation",
+      "Installed enforcement validation",
+      "Default and full installation smoke",
+      "Independent acceptance review"
+    ],
+    "agent_roles": [
+      "primary coordinator",
+      "assigned task implementers",
+      "fresh task validators",
+      "fresh independent acceptance reviewer"
+    ],
+    "review_focus": [
+      "Intent and acceptance conformance",
+      "Profile and optional-module boundaries",
+      "Installer preservation and recovery",
+      "Evidence and enforcement truthfulness",
+      "Progressive disclosure and AGENTS bootstrap"
+    ]
+  },
+  "repository_scope": [
+    {
+      "repository_id": "current",
+      "base": "22edc1bcc4f595ad0680dd9ef1a1b57b32d5b95c",
+      "head": "e0eac2f32c1f2102341e1e526857d5a0241eb945",
+      "committed_range": "22edc1bcc4f595ad0680dd9ef1a1b57b32d5b95c..e0eac2f32c1f2102341e1e526857d5a0241eb945",
+      "uncommitted_entries": [],
+      "snapshot_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "requirement_coverage": [
+    {"requirement_id":"REQ-001","repository_ids":["current"],"status":"covered","implementation_references":[".agents/kit-catalog.json"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-002","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/shape-idea/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-003","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/write-spec/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-004","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/plan/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-005","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/decompose-tasks/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-006","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/implement/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-007","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/review/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-008","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/create-skill/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-009","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/domain-model/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-010","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/setup/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-011","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/ask-kit/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-012","repository_ids":["current"],"status":"covered","implementation_references":["scripts/install.py"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-013","repository_ids":["current"],"status":"covered","implementation_references":["scripts/install.py"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-014","repository_ids":["current"],"status":"covered","implementation_references":["scripts/validate.py"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-015","repository_ids":["current"],"status":"covered","implementation_references":["AGENTS.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-016","repository_ids":["current"],"status":"covered","implementation_references":["AGENTS.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-017","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/implement/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-018","repository_ids":["current"],"status":"covered","implementation_references":["AGENTS.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-019","repository_ids":["current"],"status":"covered","implementation_references":[".agents/kit-catalog.json"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-020","repository_ids":["current"],"status":"covered","implementation_references":["AGENTS.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-021","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/decompose-tasks/assets/tasks.template.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-022","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/review/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-023","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/implement/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-024","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/decompose-tasks/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-025","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/implement/assets/handoff.template.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-026","repository_ids":["current"],"status":"covered","implementation_references":["AGENTS.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-027","repository_ids":["current"],"status":"covered","implementation_references":["docs/usage-guide.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-028","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/domain-model/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-029","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/domain-model/assets/adr.template.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-030","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/implement/references/testing.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-031","repository_ids":["current"],"status":"covered","implementation_references":[".agents/modules/evidence/MODULE.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-032","repository_ids":["current"],"status":"covered","implementation_references":[".agents/modules/enforcement/check.py"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-033","repository_ids":["current"],"status":"covered","implementation_references":[".agents/modules/multi-repo/MODULE.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-034","repository_ids":["current"],"status":"covered","implementation_references":[".agents/modules/compliance/MODULE.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-035","repository_ids":["current"],"status":"covered","implementation_references":["AGENTS.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"REQ-036","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/write-spec/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-001","repository_ids":["current"],"status":"covered","implementation_references":["scripts/validate.py"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-002","repository_ids":["current"],"status":"covered","implementation_references":["AGENTS.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-003","repository_ids":["current"],"status":"covered","implementation_references":["tests/scenarios.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-004","repository_ids":["current"],"status":"covered","implementation_references":["scripts/install.py"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-005","repository_ids":["current"],"status":"covered","implementation_references":["scripts/validate.py"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-006","repository_ids":["current"],"status":"covered","implementation_references":[".agents/modules/enforcement/check.py"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-007","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/domain-model/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-008","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/setup/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-009","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/ask-kit/SKILL.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-010","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/implement/references/testing.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-011","repository_ids":["current"],"status":"covered","implementation_references":["AGENTS.md"],"evidence_references":["review.md"]},
+    {"requirement_id":"AC-012","repository_ids":["current"],"status":"covered","implementation_references":[".agents/skills/plan/SKILL.md"],"evidence_references":["review.md"]}
+  ],
+  "checks": [
+    {
+      "id": "full-test-suite",
+      "requirement_ids": ["REQ-001","REQ-002","REQ-003","REQ-004","REQ-005","REQ-006","REQ-007","REQ-008","REQ-009","REQ-010","REQ-011","REQ-012","REQ-013","REQ-014","REQ-015","REQ-016","REQ-017","REQ-018","REQ-019","REQ-020","REQ-021","REQ-022","REQ-023","REQ-024","REQ-025","REQ-026","REQ-027","REQ-028","REQ-029","REQ-030","REQ-031","REQ-032","REQ-033","REQ-034","REQ-035","REQ-036","AC-001","AC-002","AC-003","AC-004","AC-005","AC-006","AC-007","AC-008","AC-009","AC-010","AC-011","AC-012"],
+      "repository_ids": ["current"],
+      "kind": "scoped",
+      "required": true,
+      "applicability": "applicable",
+      "not_applicable_reason": null,
+      "status": "passed",
+      "observed_result": "194 tests passed.",
+      "evidence_class": "observed evidence",
+      "output_reference": "review.md"
+    },
+    {
+      "id": "source-validation",
+      "requirement_ids": ["REQ-001","REQ-008","REQ-012","REQ-014","REQ-019","REQ-027","REQ-032","REQ-035","REQ-036","AC-001","AC-005","AC-011","AC-012"],
+      "repository_ids": ["current"],
+      "kind": "regression",
+      "required": true,
+      "applicability": "applicable",
+      "not_applicable_reason": null,
+      "status": "passed",
+      "observed_result": "Source validation passed with 10 skills and 4 modules.",
+      "evidence_class": "observed evidence",
+      "output_reference": "review.md"
+    },
+    {
+      "id": "failure-path-validation",
+      "requirement_ids": ["REQ-012","REQ-013","REQ-014","REQ-016","REQ-017","REQ-023","REQ-026","REQ-031","REQ-032","REQ-033","REQ-034","AC-004","AC-005","AC-006"],
+      "repository_ids": ["current"],
+      "kind": "failure-path",
+      "required": true,
+      "applicability": "applicable",
+      "not_applicable_reason": null,
+      "status": "passed",
+      "observed_result": "Installer conflict, rollback, malformed input and evidence-gate tests passed.",
+      "evidence_class": "observed evidence",
+      "output_reference": "review.md"
+    },
+    {
+      "id": "installation-smoke",
+      "requirement_ids": ["REQ-008","REQ-009","REQ-010","REQ-011","REQ-012","REQ-013","REQ-019","REQ-031","REQ-032","REQ-033","REQ-034","REQ-035","AC-001","AC-004","AC-011"],
+      "repository_ids": ["current"],
+      "kind": "regression",
+      "required": true,
+      "applicability": "applicable",
+      "not_applicable_reason": null,
+      "status": "passed",
+      "observed_result": "Default and full clean installation, idempotency and installed checker passed.",
+      "evidence_class": "observed evidence",
+      "output_reference": "review.md"
+    }
+  ],
+  "review": {
+    "reviewer_role": "independent acceptance reviewer",
+    "reviewer_id": "review-agent-a5d0e87e",
+    "implementers": [
+      "primary-agent",
+      "assigned-task-implementers"
+    ],
+    "prior_participation": [
+      "review"
+    ],
+    "fresh_context": true,
+    "independence": "independent",
+    "independence_basis": "Fresh context with no implementation or correction participation.",
+    "verdict": "approved",
+    "reference": "review.md"
+  },
+  "known_limits": "not-tracked",
+  "remaining_risks": [
+    "Behavioral scenarios are not cross-provider benchmark results.",
+    "Installer recovery assumes one cooperative writer.",
+    "Compliance identities are editable declarations rather than authenticated identities."
+  ],
+  "follow_ups": [
+    "Run the documented baseline protocol before comparative performance claims."
+  ]
+}

@@ -1,6 +1,8 @@
 ---
 id: SPEC-<NNN>
 title: <Capability name>
+sources:
+  - <authoritative source link or confirmed input>
 status: draft
 depends_on: []
 ---
@@ -8,6 +10,10 @@ depends_on: []
 # <Capability name>
 
 ## Context
+
+## Confirmed rationale
+
+<Material product why with source links, or `Unknown`; no implementation rationale.>
 
 ## Outcome
 

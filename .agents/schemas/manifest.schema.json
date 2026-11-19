@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentic-sdlc-kit:manifest:v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kit_version",
+    "request",
+    "components",
+    "global_resources"
+  ],
+  "properties": {
+    "schema_version": {"const": 2},
+    "kit_version": {"const": "2.1.0"},
+    "request": {"$ref": "#/$defs/request"},
+    "components": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/component"}
+    },
+    "global_resources": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/global_resource"}
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "names": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/name"}
+    },
+    "safe_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*//)(?!.*\\/$)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*\\\\)[^\\u0000-\\u001F\\u007F]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "explicit_components"],
+      "properties": {
+        "profile": {"$ref": "#/$defs/name"},
+        "explicit_components": {"$ref": "#/$defs/names"}
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name", "path", "ownership", "sha256"],
+      "properties": {
+        "kind": {"enum": ["skill", "module"]},
+        "name": {"$ref": "#/$defs/name"},
+        "path": {"$ref": "#/$defs/safe_path"},
+        "ownership": {"enum": ["managed", "project-owned"]},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "global_resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "ownership", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/safe_path"},
+        "ownership": {"enum": ["managed", "project-owned"]},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}
