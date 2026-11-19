@@ -77,7 +77,11 @@
     ".agents/schemas/manifest.schema.json",
     ".agents/schemas/markdown-document.schema.json",
     ".agents/tools/check_artifact_ids.py",
-    ".agents/tools/fingerprint_artifact.py"
+    ".agents/tools/check_companions.py",
+    ".agents/tools/context_search.py",
+    ".agents/tools/fingerprint_artifact.py",
+    ".agents/tools/metrics_report.py",
+    ".agents/tools/ralph-loop.sh"
   ],
   "profiles": {
     "default": {

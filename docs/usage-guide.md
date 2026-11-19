@@ -1025,6 +1025,15 @@ An `approved` verdict also requires:
 - all risk-required evidence;
 - independent review for high-risk work.
 
+### Deterministic CLI tools in `.agents/tools/`
+
+The kit ships four additional zero-dependency CLI helpers installed alongside `.agents/tools/fingerprint_artifact.py` and `.agents/tools/check_artifact_ids.py`:
+
+- `python3 .agents/tools/context_search.py --root . --query "<term>" [--scope auto|vault|code] [--top-k 5]` — 3-cycle Iterative Retrieval across any `vault/` layout or live source code, returning ranked files (`score >= 0.7`), verified disk paths, UI selectors, extracted code symbols (`class`, `def`, `function`, `@Component`, `@Controller` with line numbers `Lxx`), and matched line snippets without burning LLM tokens on full-file reads.
+- `python3 .agents/tools/check_companions.py --root . --feature-dir features/{NNN}-{slug}` — Deterministically verifies that endpoints, event names, fields, and `data-testid` attributes declared in `api.md`, `event.md`, and `data-model.md` exist in the codebase and flags `snake_case` vs `camelCase` drift with exact `file:line` locations.
+- `bash .agents/tools/ralph-loop.sh features/{NNN}-{slug}/tasks.md [--repo <id>] [--tasks T01,T02] [--only-autonomous]` — Clean-context per-task execution loop that passes model capability via CLI flags (0 `.env` edit iterations), pauses on interactive `[I]` tasks, and stops after 2 failed attempts (*Circuit Breaker*).
+- `python3 .agents/tools/metrics_report.py --root . [--tasks features/{NNN}-{slug}/tasks.md]` — Summarizes task completion by repo/modality and reports `Pass@1`, sessions executed, and `.env` iterations saved from `.work/metrics.jsonl`.
+
 ## 15. Validation commands
 
 These validators have different scopes:

@@ -39,9 +39,10 @@ Before writing, inspect `.agents/project.md`; if it exists, report it as unsuppo
 ### 1. Explore (Code as Source of Truth, Iterative Retrieval & Search-First)
 
 1. Read the approved specification (the Delta contract) and extract the complete **AC list**, constraints, and any user-supplied technical direction.
-2. **Detect `target_repos` and ground in the live codebase (`.agents/conventions/loading-recipes.md`):**
-   - **Executable code in the base branch is the source of truth.** Never rely on old specifications to infer current behavior.
-   - Use **Universal Context Discovery** (configured `roots.domain_context` / `vault/` of any layout if present, or target repo `AGENTS.md` + package/build manifests) combined with **Iterative Retrieval (max 3 cycles)** to locate the 3–5 high-relevance (`>= 0.7`) files owning the behavior and verify cited paths in the repo.
+2. **Detect `target_repos` and ground in the live codebase with minimal tokens (`.agents/conventions/loading-recipes.md`):**
+   - **Executable code in the base branch is the source of truth.** Never rely on old specifications to infer current behavior, and never read entire directories into context.
+   - **Pass 1 (Context / Vault & Repo Discovery):** Run `python3 .agents/tools/context_search.py --root . --query "<capability>" --scope auto --top-k 5` to identify `target_repos`, existing UI selectors, `verified_code_paths`, and `suggested_refinement_terms`.
+   - **Pass 2 (Code Symbol & Line-Window Discovery):** Run `python3 .agents/tools/context_search.py --root <target-repo> --scope code --query "<refined-term>" --top-k 5`. The tool returns the top 3–5 source files (`score >= 0.7`) **along with their extracted `symbols` (`class`, `def`, `function`, `@Component`, `@Controller` with line numbers `Lxx`) and `matched_lines`**. Read only the 30–50 line window around `Lxx` (`offset` + `limit`) to inspect signatures without burning tokens on full files.
 3. **Apply Search-First (Adopt -> Extend -> Compose -> Build):**
    - Check whether required utilities, domain services, or UI design-system components already exist in the repository or shared internal libraries so the plan reuses them (**Zero Duplication**).
    - If the user specified a technology/architecture choice, contrast it against the repository's existing stack: adopt it directly if aligned, or flag any conflict/trade-off for step 2.

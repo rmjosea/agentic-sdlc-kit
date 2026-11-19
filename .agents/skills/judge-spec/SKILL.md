@@ -51,8 +51,8 @@ For artifact types without a dedicated rubric (`decision`, `user-persona`, `busi
 1. Read the artifact and extract `type` from Shape A frontmatter.
 2. Load only the matching `rubric-{type}.md` (or the Generic artifact checklist below). **One type, one rubric, one session.**
 3. **Optional L1 grounding, glossary, and staleness pre-check:**
-   - For `spec`, `user-journey`, or `user-story`, inspect high-level repository context via Universal Context Discovery (`.agents/conventions/loading-recipes.md`: any configured `roots.domain_context` / `vault/` layout or target repo `AGENTS.md` + manifests) and the project glossary (`glossary.md` / `CONTEXT.md` when present). Code feasibility here is a **non-blocking advisory** (`FLAG` for `plan-feature`), while domain-term contradictions are flagged for resolution.
-   - If re-judging an amended specification that already has a downstream `plan.md` or `tasks.md`, identify and flag which downstream sections or tasks become `stale`.
+   - For `spec`, `user-journey`, or `user-story`, run `python3 .agents/tools/context_search.py --root . --query "<domain-term>" --top-k 5` (per `.agents/conventions/loading-recipes.md`) and check the project glossary (`glossary.md` / `CONTEXT.md` when present). Code feasibility here is a **non-blocking advisory** (`FLAG` for `plan-feature`), while domain-term contradictions are flagged for resolution.
+   - If re-judging an amended specification that already has a downstream `plan.md` or `tasks.md` (or checking item revisions with `python3 .agents/tools/fingerprint_artifact.py`), identify and flag which downstream sections or tasks become `stale`.
 
 ### 1. Score every dimension
 

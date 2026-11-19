@@ -10,9 +10,9 @@ Execute one bounded task or Lightweight-lane change at a time in a clean context
 ## Select and bound
 
 1. Read `AGENTS.md`, the selected `features/{NNN}-{slug}/tasks.md`, `plan.md`, and co-located companions (`data-model.md`, `api.md`, `event.md`, `test-plan.md`), or confirm Lightweight-lane conditions (`.agents/conventions/change-lanes.md` XS/S) and state `Intent`, `Change`, and `Verification` inline.
-2. **Select scope and execution mode (Interactive vs. Clean-Context Loop `.sh`):**
-   - Support filtering `tasks.md` by repository (`--repo <repo-id>`), by specific task IDs (`--tasks T01,T02`), or by autonomous modality (`--only-autonomous`, running `[A]`/`[*]` tasks and pausing before `[I]` tasks).
-   - When multiple unchecked `[ ]` tasks are in scope and execution mode was not specified, ask the user once (per `AGENTS.md` human decision protocol) whether to **(A — Recommended for `[A]`/`[*]` batches)** run via the clean-context loop script (`.sh`, one fresh session per task) or **(B)** execute the next ready task interactively in the current session.
+2. **Select scope and execution mode (Interactive vs. Clean-Context `ralph-loop.sh`):**
+   - Support filtering `tasks.md` by repository (`--repo <repo-id>`), by specific task IDs (`--tasks T01,T02`), or by autonomous modality (`--only-autonomous`, running `[A]` tasks and pausing before `[I]` tasks).
+   - When multiple unchecked `[ ]` tasks are in scope and execution mode was not specified, ask the user once (per `AGENTS.md` human decision protocol) whether to **(A — Recommended for `[A]`/`[*]` batches)** run via `bash .agents/tools/ralph-loop.sh <tasks.md> [--repo <id>] [--tasks T01,T02]` (one fresh session per task, 0 `.env` iterations) or **(B)** execute the next ready task interactively in the current session.
    - Within a repository, execute tasks **sequentially** on a standard Git branch (`git-conventions`); `git worktree` is optional and needed only when running concurrent autonomous agents on the same local checkout. Across independent repositories, groups may run in parallel because contracts are pinned in `api.md` / `event.md`.
 3. Respect the review queue and WIP capacity (maximum one active task per context when unconfigured). Do not start blocked tasks (`## Bloqueadas`).
 4. Load the target repository's `AGENTS.md` (or configured domain context / `vault/` of any layout + cited golden-example file in the live codebase) and the matching stack juez rubric from `rubrics/`:
@@ -35,8 +35,9 @@ Exploration is read-only. Implementation mutates only the assigned outcome. Vali
 2. **Test first (red)**: write or locate the test specified by `Verify` with concrete inputs and expected output in the repo's real test stack. Confirm it **fails first** to prove it exercises the new behavior. Read [references/testing.md](references/testing.md) when selecting test seams.
 3. **Implement (minimal diff & Zero Duplication)**: write the minimum code to make the test pass, reusing existing repository utilities and UI design-system components cited in `plan.md` and matching the cited golden-example. Never duplicate existing helpers or swallow errors with empty catches/silent defaults.
 4. **Run test + lint/build (green)**: execute the task's test and the repo's linter/typecheck/build in short feedback loops (0 new errors relative to baseline). Read [references/debugging.md](references/debugging.md) when a failure is non-obvious.
-5. **Audit the diff and run the Juez rubric**:
+5. **Audit the diff, verify companions (`check_companions.py`), and run the Juez rubric**:
    - Inspect the real `git diff`, then make a **separate pass over test changes only** (`git diff -- <test paths>`): any deleted, skipped, or weakened assertion, or mocking of the unit under test, is an automatic **RECHAZADO**.
+   - When Zero-Invention companions exist (`api.md`, `event.md`, `data-model.md`), run `python3 .agents/tools/check_companions.py --root . --feature-dir features/{NNN}-{slug}` to deterministically verify field names, endpoints, events, and `data-testid` selectors before scoring.
    - Score the diff against the active stack's rubric (`rubrics/{stack}.md`).
    - **APROBADO** -> commit following `.agents/skills/git-conventions/SKILL.md` (referencing the task ID `T0x`), flip the task checkbox to `[x]` in `tasks.md` (or record exact `Result` and mark `done`), and move to the next task in a clean context.
    - **RECHAZADO** -> iterate with concrete file:line failure evidence; never check off a failed or rejected task.

@@ -12,15 +12,19 @@ related:
 > [!info] When to load
 > Load when starting a skill and deciding which files to pull into context. Prerequisites: `AGENTS.md`.
 
-## Universal context discovery (Zero-Lock-in, 3 levels)
+## Universal context discovery (Zero-Lock-in, 3 levels via `context_search.py`)
 
-The kit never requires a specific `vault/` folder layout. Resolve codebase context in this order:
+The kit never requires a specific `vault/` folder layout and never reads entire directories into context. Use `.agents/tools/context_search.py` to query both Vault summaries and live source code with near-zero token overhead:
 
-| Level | When used | What to read |
+```bash
+python3 .agents/tools/context_search.py --root . --query "<term1>" --query "<term2>" --scope auto --top-k 5
+```
+
+| Level | When used | What to run / read |
 |---|---|---|
-| **1. Configured context or `vault/` (any layout)** | When `roots.domain_context` is set in `.agents/project.json` or a `vault/` directory exists (whether organized as `vault/20-Repos/`, `vault/repositorios/`, `vault/componentes/`, or flat Markdown) | Query matching repo/component/architecture summaries first to narrow scope, then **verify cited file paths against the live codebase** (code is the source of truth if the index is stale). |
-| **2. Standard repository (no `vault/`)** | Default for any repository without a separate knowledge vault | Read the target repository's `AGENTS.md`, package/build manifests (`package.json`, `pyproject.toml`, `pom.xml`, `go.mod`), and focused module/test files. |
-| **3. Iterative Retrieval (max 3 cycles)** | Whenever `drill-docs`, `plan-feature`, or `implement` needs to locate existing behavior or components across a codebase | **Cycle 1 (Dispatch):** Search broad domain/feature keywords.<br>**Cycle 2 (Evaluate & Refine):** Score candidates (`0.0–1.0`), learn the repository's actual naming/terminology, drop `<0.2` noise, and query missing gaps.<br>**Cycle 3 (Stop at Good Enough):** Stop as soon as **3–5 high-relevance (`>= 0.7`) files** are identified. Never dump whole directories into context. |
+| **1. Configured context or `vault/` (any layout)** | When `roots.domain_context` is set in `.agents/project.json` or a `vault/` directory exists (`--scope auto` or `--scope vault`) | Run `context_search.py` to get the top 3–5 matching cards (`score >= 0.7`), their `selectors`, `wikilinks`, and `verified_code_paths` (already checked on disk against the live codebase). |
+| **2. Standard repository (no `vault/` or `--scope code`)** | Default for any repository without a vault, or Pass 2 inside `plan-feature` | Run `context_search.py --scope code` to get the top 3–5 source files **plus their extracted `symbols` (`class`, `def`, `function`, `@Component`, `@Controller` with exact line numbers `Lxx`) and `matched_lines`**. Read only the 30–50 lines around `Lxx` (`offset` + `limit`), never the whole file. |
+| **3. Iterative Retrieval (max 3 cycles)** | Whenever `drill-docs`, `plan-feature`, or `implement` needs to locate existing behavior or components | **Cycle 1 (Dispatch):** Run `context_search.py` with broad domain keywords.<br>**Cycle 2 (Evaluate & Refine):** If `stop_condition_met` is `False` (`< 3` files with `score >= 0.7`), re-run `context_search.py` using its `suggested_refinement_terms` (actual codebase vocabulary).<br>**Cycle 3 (Surgical Read):** Open only the exact `L<num>` line windows of the 3–5 top files. |
 
 ## Search-First rule (Adopt -> Extend -> Compose -> Build)
 

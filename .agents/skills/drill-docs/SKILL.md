@@ -43,7 +43,7 @@ Extract structure from unstructured input through a focused, one-question-at-a-t
 ### 1. Classify the input, lane, and existing context
 
 1. Identify what was provided (idea, brain dump, transcript, research notes) and check `.agents/conventions/change-lanes.md` (30-second test). If the request is XS/S with no new interface, behaviour change, or sensitive surface, recommend the Lightweight lane immediately.
-2. **Brownfield L1 context check (when modifying or extending an existing product):** Executable code is the source of truth for current behavior. Perform a fast, read-only L1 check (per `.agents/conventions/loading-recipes.md`: configured `roots.domain_context` / `vault/` summaries if present, or target repo `AGENTS.md`, manifests, and 1-cycle Iterative Retrieval) to see what already exists and surface contradictions before asking questions. Never copy code or implementation details into the functional draft.
+2. **Brownfield L1 context check (when modifying or extending an existing product):** Executable code is the source of truth for current behavior. Run a single, low-token pass of `python3 .agents/tools/context_search.py --root . --query "<keyword>" --scope auto --top-k 5` (per `.agents/conventions/loading-recipes.md`) to see existing capabilities, UI selectors, and verified code paths in `<50 ms` without reading full source files. Use those findings only to surface contradictions and recommend reusing existing flows in your questions — never copy code into the functional draft.
 3. Detect which target dimensions are already present versus missing.
 
 ### 2. Drill the dimensions (iterative Q&A, one question at a time)
